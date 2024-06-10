@@ -15,13 +15,14 @@ const (
 type CommunicationStyle string
 
 const (
-	Normal  CommunicationStyle = "Normal"
+	Normal  CommunicationStyle = "Default"
 	Direct  CommunicationStyle = "Direct"
 	Passive CommunicationStyle = "Passive"
 )
 
 type User struct {
 	ID                 uint               `json:"id" gorm:"primaryKey"`
+	DeviceID           string             `json:"device_id" gorm:"uniqueIndex"`
 	Age                int                `json:"age"`
 	Gender             Gender             `json:"gender"`
 	Language           string             `json:"language"`
