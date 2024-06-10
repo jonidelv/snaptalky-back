@@ -2,19 +2,17 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
-	"snaptalky/routes/scan"
-	"snaptalky/routes/user"
 )
 
 func SetupRoutes(router *gin.Engine) {
-  userRoutes := router.Group("/user")
-  {
-    userRoutes.GET("/:id", user.GetUser)
-    userRoutes.PUT("/", user.UpdateUser)
-  }
+	userRoutes := router.Group("/user")
+	{
+		userRoutes.GET("/:id", GetUser)
+		userRoutes.PUT("/", UpdateUser)
+	}
 
-  scanRoutes := router.Group("/scan")
-  {
-    scanRoutes.POST("/", scan.ProcessResponse)
-  }
+	scanRoutes := router.Group("/scan")
+	{
+		scanRoutes.POST("/", ProcessResponse)
+	}
 }

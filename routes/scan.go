@@ -1,11 +1,10 @@
-package scan
+package routes
 
 import (
   "github.com/gin-gonic/gin"
   "net/http"
 )
 
-// ProcessResponse handles POST requests to process text and image inputs
 func ProcessResponse(c *gin.Context) {
   text := c.PostForm("text")
   file, _, err := c.Request.FormFile("file")

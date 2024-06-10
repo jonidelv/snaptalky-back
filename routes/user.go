@@ -1,4 +1,4 @@
-package user
+package routes
 
 import (
 	"github.com/gin-gonic/gin"
@@ -9,7 +9,6 @@ import (
 	"time"
 )
 
-// GetUser handles GET requests to fetch user data by ID
 func GetUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
@@ -26,7 +25,6 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, user)
 }
 
-// UpdateUser handles PUT requests to update user data
 func UpdateUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
@@ -34,7 +32,7 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	user.LastTimeUsed = time.Now() // Update last time used
+	user.LastScannedAt = time.Now()
 
 	if err := database.DB.Save(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
