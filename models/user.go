@@ -1,6 +1,10 @@
 package models
 
 import (
+	"errors"
+	"github.com/google/uuid"
+	"gorm.io/gorm"
+	"snaptalky/database"
 	"time"
 )
 
@@ -25,12 +29,27 @@ type User struct {
 	DeviceID           string             `json:"device_id" gorm:"uniqueIndex"`
 	Age                int                `json:"age"`
 	Gender             gender             `json:"gender"`
-	Language           string             `json:"language"`
 	Bio                string             `json:"bio"`
-	PublicID           string             `json:"public_id"`
-	IsPremium          bool               `json:"is_premium"`
+	PublicID           string             `json:"public_id" gorm:"uniqueIndex"`
+	IsPremium          bool               `json:"is_premium" gorm:"default:false"`
 	LastScannedAt      time.Time          `json:"last_scanned_at"`
-	ScanCount          int                `json:"scan_count"`
-	CommunicationStyle communicationStyle `json:"communication_style"`
-	UpdatedAt          time.Time          `json:"updated_at"`
+	ScanCount          int                `json:"scan_count" gorm:"default:0"`
+	CommunicationStyle communicationStyle `json:"communication_style" gorm:"default:normal"`
+	UpdatedAt          time.Time          `json:"updated_at" gorm:"autoUpdateTime"`
+	CreatedAt          time.Time          `json:"created_at" gorm:"autoCreateTime"`
+}
+
+func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
+	if u.DeviceID == "" {
+		return errors.New("device_id is required")
+	}
+	// Generate a unique PublicID
+	u.PublicID = uuid.New().String()
+
+	return nil
+}
+
+// IncrementScanCount atomically increments the ScanCount for the user.
+func (u *User) IncrementScanCount() error {
+	return database.DB.Model(u).Where("id = ?", u.ID).UpdateColumn("scan_count", gorm.Expr("scan_count + ?", 1)).Error
 }
