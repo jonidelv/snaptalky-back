@@ -6,13 +6,9 @@ import (
 
 func SetupRoutes(router *gin.Engine) {
 	userRoutes := router.Group("/user")
-	{
-		userRoutes.GET("/:id", GetUser)
-		userRoutes.PUT("/", UpdateUser)
-	}
+	userRoutes.GET("/:id", GetUser)
+	userRoutes.PUT("/", UpdateUser)
 
 	scanRoutes := router.Group("/scan")
-	{
-		scanRoutes.POST("/", ProcessResponse)
-	}
+	scanRoutes.POST("/", ProcessResponse)
 }
