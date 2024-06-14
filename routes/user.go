@@ -6,7 +6,6 @@ import (
 	"snaptalky/database"
 	"snaptalky/models"
 	"strconv"
-	"time"
 )
 
 func GetUser(c *gin.Context) {
@@ -31,8 +30,6 @@ func UpdateUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-
-	user.LastScannedAt = time.Now()
 
 	if err := database.DB.Save(&user).Error; err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})

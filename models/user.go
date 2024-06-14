@@ -24,6 +24,14 @@ const (
 	passive communicationStyle = "passive"
 )
 
+type tone string
+
+const (
+	flirting     tone = "flirting"
+	friendly     tone = "friendly"
+	professional tone = "professional"
+)
+
 type User struct {
 	ID                 uint               `json:"id" gorm:"primaryKey"`
 	DeviceID           string             `json:"device_id" gorm:"uniqueIndex"`
@@ -35,6 +43,7 @@ type User struct {
 	LastScannedAt      time.Time          `json:"last_scanned_at"`
 	ScanCount          int                `json:"scan_count" gorm:"default:0"`
 	CommunicationStyle communicationStyle `json:"communication_style" gorm:"default:normal"`
+	Tone               tone               `json:"tone" gorm:"default:friendly"`
 	UpdatedAt          time.Time          `json:"updated_at" gorm:"autoUpdateTime"`
 	CreatedAt          time.Time          `json:"created_at" gorm:"autoCreateTime"`
 }
@@ -51,5 +60,7 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 
 // IncrementScanCount atomically increments the ScanCount for the user.
 func (u *User) IncrementScanCount() error {
-	return database.DB.Model(u).Where("id = ?", u.ID).UpdateColumn("scan_count", gorm.Expr("scan_count + ?", 1)).Error
+	return database.DB.Model(u).Where("id = ?", u.ID).UpdateColumn(
+		"scan_count", gorm.Expr("scan_count + ?", 1),
+	).Error
 }
