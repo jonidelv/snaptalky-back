@@ -1,23 +1,32 @@
 package routes
 
 import (
-  "github.com/gin-gonic/gin"
-  "net/http"
+	"github.com/gin-gonic/gin"
+	"net/http"
+	"snaptalky/utils/openai"
 )
 
+type RequestData struct {
+	Text    string `json:"text"`
+	Context string `json:"context"`
+	Tone    string `json:"tone"`
+	Image   string `json:"image"` // base64 encoded image
+}
+
 func ProcessResponse(c *gin.Context) {
-  text := c.PostForm("text")
-  file, _, err := c.Request.FormFile("file")
-  if err != nil && err != http.ErrMissingFile {
-    c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
-    return
-  }
+	var requestData RequestData
 
-  // Placeholder for actual processing logic
-  response := "Processed response: " + text
-  if file != nil {
-    response += " (with image)"
-  }
+	if err := c.ShouldBindJSON(&requestData); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		return
+	}
 
-  c.JSON(http.StatusOK, gin.H{"response": response})
+	// Generate responses using the OpenAI API
+	responses, err := openai.GenerateResponses(requestData)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error()})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"responses": responses})
 }
