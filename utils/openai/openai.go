@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"snaptalky/utils"
@@ -15,6 +16,11 @@ type ApiResponse struct {
 			Content string `json:"content"`
 		} `json:"message"`
 	} `json:"choices"`
+	Usage struct {
+		PromptTokens     int `json:"prompt_tokens"`
+		CompletionTokens int `json:"completion_tokens"`
+		TotalTokens      int `json:"total_tokens"`
+	} `json:"usage"`
 }
 
 func CallOpenaiApi(contentPayload []Content) (string, error) {
@@ -68,6 +74,9 @@ func CallOpenaiApi(contentPayload []Content) (string, error) {
 		utils.LogError(err, "API response validation error")
 		return "", err
 	}
+
+	log.Printf("Prompt Tokens: %d, Completion Tokens: %d, Total Tokens: %d",
+		apiResponse.Usage.PromptTokens, apiResponse.Usage.CompletionTokens, apiResponse.Usage.TotalTokens)
 
 	return apiResponse.Choices[0].Message.Content, nil
 }
