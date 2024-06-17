@@ -7,6 +7,7 @@ import (
 	"os"
 	"snaptalky/database"
 	"snaptalky/models"
+	"snaptalky/utils"
 )
 
 type startRequest struct {
@@ -16,26 +17,40 @@ type startRequest struct {
 func StartApp(c *gin.Context) {
 	var req startRequest
 	if err := c.BindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		utils.LogError(err, "Invalid request payload")
+		c.JSON(http.StatusBadRequest, ApiResponse{
+			Status:  "error",
+			Message: "Invalid request",
+		})
 		return
 	}
 
 	tknHeader := c.GetHeader("tkn")
 	startToken := os.Getenv("START_TOKEN")
 	if tknHeader != startToken {
-		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		c.JSON(http.StatusUnauthorized, ApiResponse{
+			Status:  "error",
+			Message: "Unauthorized",
+		})
 		return
 	}
 
 	deviceID := req.DeviceID
 	if deviceID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "device_id is required"})
+		c.JSON(http.StatusBadRequest, ApiResponse{
+			Status:  "error",
+			Message: "device_id is required",
+		})
 		return
 	}
 
 	appToken := os.Getenv("APP_TOKEN")
 	if appToken == "" {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "t not set in environment"})
+		utils.LogError(nil, "APP_TOKEN not set in environment")
+		c.JSON(http.StatusInternalServerError, ApiResponse{
+			Status:  "error",
+			Message: "APP_TOKEN not set in environment",
+		})
 		return
 	}
 
@@ -49,17 +64,29 @@ func StartApp(c *gin.Context) {
 				DeviceID: deviceID,
 			}
 			if err := database.DB.Create(&user).Error; err != nil {
-				c.JSON(http.StatusInternalServerError, gin.H{"error": "Error creating user"})
+				utils.LogError(err, "Error creating user")
+				c.JSON(http.StatusInternalServerError, ApiResponse{
+					Status:  "error",
+					Message: "Error creating user",
+				})
 				return
 			}
 		} else {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+			utils.LogError(err, "Database error")
+			c.JSON(http.StatusInternalServerError, ApiResponse{
+				Status:  "error",
+				Message: "Database error",
+			})
 			return
 		}
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"user":  user,
-		"token": appToken,
+	c.JSON(http.StatusOK, ApiResponse{
+		Status:  "success",
+		Message: "User retrieved/created successfully",
+		Data: gin.H{
+			"user":  user,
+			"token": appToken,
+		},
 	})
 }

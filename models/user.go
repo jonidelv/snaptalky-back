@@ -58,7 +58,7 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-// IncrementScanCount atomically increments the ScanCount for the user.
+// IncrementScanCount UserIncrementScanCount IncrementScanCount atomically increments the ScanCount for the user.
 func (u *User) IncrementScanCount() error {
 	return database.DB.Model(u).Where("id = ?", u.ID).UpdateColumn(
 		"scan_count", gorm.Expr("scan_count + ?", 1),

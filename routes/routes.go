@@ -5,6 +5,12 @@ import (
 	"snaptalky/middlewares"
 )
 
+type ApiResponse struct {
+	Status  string      `json:"status"`
+	Message string      `json:"message"`
+	Data    interface{} `json:"data,omitempty"`
+}
+
 func SetupRoutes(router *gin.Engine) {
 	userRoutes := router.Group("/user")
 	userRoutes.Use(middlewares.AuthMiddleware())
