@@ -9,12 +9,12 @@ import (
 type Response struct {
 	RespondedOk bool     `json:"respondedOk"`
 	Language    string   `json:"language"`
-	Answers     []string `json:"answers,omitempty"`
+	Answers     []string `json:"answers"`
 	Tones       struct {
-		FlirtingTones     []string `json:"flirtingTones,omitempty"`
-		ProfessionalTones []string `json:"professionalTones,omitempty"`
-		FriendlyTones     []string `json:"friendlyTones,omitempty"`
-	} `json:"tones,omitempty"`
+		FlirtingTones     []string `json:"flirtingTones"`
+		ProfessionalTones []string `json:"professionalTones"`
+		FriendlyTones     []string `json:"friendlyTones"`
+	} `json:"tones"`
 }
 
 func GenerateResponses(dataToBuildResponse *routes.DataToBuildResponse) (Response, error) {

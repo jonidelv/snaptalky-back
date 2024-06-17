@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"log"
 	"os"
 	"snaptalky/models"
+	"snaptalky/utils"
 )
 
 var DB *gorm.DB
@@ -26,12 +26,14 @@ func ConnectDatabase() {
 	// Connect to the database
 	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("Failed to connect to database:  %v", err)
+		utils.LogError(err, "Failed to connect to database")
+		return
 	}
 
 	// AutoMigrate the User model
 	if err := database.AutoMigrate(&models.User{}); err != nil {
-		log.Fatalf("Failed to migrate database: %v", err)
+		utils.LogError(err, "Failed to migrate database")
+		return
 	}
 
 	// Set the global DB variable
