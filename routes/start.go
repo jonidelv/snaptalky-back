@@ -85,8 +85,8 @@ func StartApp(c *gin.Context) {
 		Status:  "success",
 		Message: "User retrieved/created successfully",
 		Data: gin.H{
-			"user":  user,
-			"token": appToken,
+			"user": user,
+			"id":   appToken, // This is the token but we call it id
 		},
 	})
 }
