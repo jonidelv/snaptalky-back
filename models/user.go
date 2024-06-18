@@ -8,42 +8,46 @@ import (
 	"time"
 )
 
-type gender string
+type Gender string
 
+// Gender enum values
 const (
-	male      gender = "male"
-	female    gender = "female"
-	nonBinary gender = "nonBinary" // Represents all other genders
+	GenderMale      Gender = "male"
+	GenderFemale    Gender = "female"
+	GenderNonBinary Gender = "nonBinary"
 )
 
-type communicationStyle string
+type CommunicationStyle string
 
+// CommunicationStyle enum values
 const (
-	normal  communicationStyle = "normal"
-	direct  communicationStyle = "direct"
-	passive communicationStyle = "passive"
+	CommunicationStyleNormal  CommunicationStyle = "normal"
+	CommunicationStyleDirect  CommunicationStyle = "direct"
+	CommunicationStylePassive CommunicationStyle = "passive"
 )
 
-type tone string
+type Tone string
 
+// Tone enum values
 const (
-	flirting     tone = "flirting"
-	friendly     tone = "friendly"
-	professional tone = "professional"
+	ToneFlirting     Tone = "flirting"
+	ToneFriendly     Tone = "friendly"
+	ToneProfessional Tone = "professional"
+	ToneCustom       Tone = "custom"
 )
 
 type User struct {
 	ID                 uint               `json:"id" gorm:"primaryKey"`
 	DeviceID           string             `json:"device_id" gorm:"uniqueIndex"`
 	Age                int                `json:"age"`
-	Gender             gender             `json:"gender"`
+	Gender             Gender             `json:"gender"`
 	Bio                string             `json:"bio"`
 	PublicID           string             `json:"public_id" gorm:"uniqueIndex"`
 	IsPremium          bool               `json:"is_premium" gorm:"default:false"`
 	LastScannedAt      time.Time          `json:"last_scanned_at"`
 	ScanCount          int                `json:"scan_count" gorm:"default:0"`
-	CommunicationStyle communicationStyle `json:"communication_style" gorm:"default:normal"`
-	Tone               tone               `json:"tone" gorm:"default:friendly"`
+	CommunicationStyle CommunicationStyle `json:"communication_style" gorm:"default:normal"`
+	Tone               Tone               `json:"tone" gorm:"default:friendly"`
 	UpdatedAt          time.Time          `json:"updated_at" gorm:"autoUpdateTime"`
 	CreatedAt          time.Time          `json:"created_at" gorm:"autoCreateTime"`
 }
