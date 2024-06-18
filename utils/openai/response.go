@@ -2,8 +2,8 @@ package openai
 
 import (
 	"encoding/json"
-	"snaptalky/routes"
 	"snaptalky/utils"
+	"snaptalky/utils/types"
 )
 
 type Response struct {
@@ -17,7 +17,7 @@ type Response struct {
 	} `json:"tones"`
 }
 
-func GenerateResponses(dataToBuildResponse *routes.DataToBuildResponse) (Response, error) {
+func GenerateResponses(dataToBuildResponse *types.DataToBuildResponses) (Response, error) {
 	contentPayload := MakeOpenaiContentPayload(dataToBuildResponse)
 	openaiResponse, err := CallOpenaiApi(contentPayload)
 	if err != nil {

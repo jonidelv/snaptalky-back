@@ -18,13 +18,6 @@ type DataRequest struct {
 	Image   string `json:"image"`
 }
 
-type DataToBuildResponse struct {
-	Text    string `json:"text"`
-	Context string `json:"context"`
-	Tone    string `json:"tone"`
-	Image   string `json:"image"` // base64 encoded image
-}
-
 func ProcessResponse(c *gin.Context) {
 	var data DataRequest
 
@@ -36,7 +29,7 @@ func ProcessResponse(c *gin.Context) {
 		return
 	}
 
-	openAIData := DataToBuildResponse{
+	openAIData := types.DataToBuildResponses{
 		Text:    data.Text,
 		Context: data.Context,
 		Tone:    data.Tone,
