@@ -13,6 +13,7 @@ import (
 
 type startRequest struct {
 	DeviceID string `json:"device_id"`
+	Platform string `json:"platform"`
 }
 
 func StartApp(c *gin.Context) {
@@ -26,7 +27,7 @@ func StartApp(c *gin.Context) {
 		return
 	}
 
-	tknHeader := c.GetHeader("tkn")
+	tknHeader := c.GetHeader("id") // This is the token coming from the app calling it id ;)
 	startToken := os.Getenv("START_TOKEN")
 	if tknHeader != startToken {
 		c.JSON(http.StatusUnauthorized, types.ApiResponse{
@@ -63,6 +64,7 @@ func StartApp(c *gin.Context) {
 			// Create a new user if not found
 			user = models.User{
 				DeviceID: deviceID,
+				Platform: req.Platform,
 			}
 			if err := database.DB.Create(&user).Error; err != nil {
 				utils.LogError(err, "Error creating user")

@@ -38,3 +38,7 @@ Thumbs.db
 
 # Go modules
 go.sum
+
+# Cert files
+cer/cert.pem
+cer/key.pem

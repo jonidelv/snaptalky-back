@@ -39,12 +39,13 @@ const (
 type User struct {
 	ID                 uint               `json:"id" gorm:"primaryKey"`
 	DeviceID           string             `json:"device_id" gorm:"uniqueIndex"`
-	Age                int                `json:"age"`
-	Gender             Gender             `json:"gender"`
-	Bio                string             `json:"bio"`
+	Platform           string             `json:"platform,omitempty"`
+	Age                int                `json:"age,omitempty"`
+	Gender             Gender             `json:"gender,omitempty"`
+	Bio                string             `json:"bio,omitempty"`
 	PublicID           string             `json:"public_id" gorm:"uniqueIndex"`
 	IsPremium          bool               `json:"is_premium" gorm:"default:false"`
-	LastScannedAt      time.Time          `json:"last_scanned_at"`
+	LastScannedAt      time.Time          `json:"last_scanned_at,omitempty"`
 	ScanCount          int                `json:"scan_count" gorm:"default:0"`
 	CommunicationStyle CommunicationStyle `json:"communication_style" gorm:"default:normal"`
 	Tone               Tone               `json:"tone" gorm:"default:friendly"`

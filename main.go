@@ -43,4 +43,10 @@ func main() {
 
 	// Run the server
 	r.Run(":" + port)
+
+	// Run the server with TLS
+	//log.Printf("Listening and serving HTTPS on :%s\n", port)
+	//if err := r.RunTLS(":"+port, "cer/cert.pem", "cer/key.pem"); err != nil {
+	//	log.Fatalf("Failed to run server: %v", err)
+	//}
 }
