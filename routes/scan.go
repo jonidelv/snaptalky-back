@@ -7,6 +7,7 @@ import (
 	"snaptalky/models"
 	"snaptalky/utils"
 	"snaptalky/utils/openai"
+	"snaptalky/utils/types"
 )
 
 type DataRequest struct {
@@ -28,7 +29,7 @@ func ProcessResponse(c *gin.Context) {
 	var data DataRequest
 
 	if err := c.ShouldBindJSON(&data); err != nil {
-		c.JSON(http.StatusBadRequest, ApiResponse{
+		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
 		})
@@ -45,7 +46,7 @@ func ProcessResponse(c *gin.Context) {
 	response, err := openai.GenerateResponses(&openAIData)
 	if err != nil {
 		utils.LogError(err, "Error generating responses from OpenAI")
-		c.JSON(http.StatusInternalServerError, ApiResponse{
+		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
 		})
@@ -56,7 +57,7 @@ func ProcessResponse(c *gin.Context) {
 		utils.LogError(err, "Failed to process user count")
 	}
 
-	c.JSON(http.StatusOK, ApiResponse{
+	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
 		Message: "Request processed successfully",
 		Data:    response,

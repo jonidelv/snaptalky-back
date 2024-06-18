@@ -5,8 +5,17 @@ import (
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 	"snaptalky/database"
+	"snaptalky/utils"
 	"time"
 )
+
+func init() {
+	// AutoMigrate the User model
+	if err := database.DB.AutoMigrate(&User{}); err != nil {
+		utils.LogError(err, "Failed to migrate database")
+		return
+	}
+}
 
 type gender string
 

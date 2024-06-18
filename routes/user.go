@@ -6,6 +6,7 @@ import (
 	"snaptalky/database"
 	"snaptalky/models"
 	"snaptalky/utils"
+	"snaptalky/utils/types"
 	"strconv"
 )
 
@@ -13,7 +14,7 @@ func GetUser(c *gin.Context) {
 	id, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
 		utils.LogError(err, "Invalid ID format")
-		c.JSON(http.StatusBadRequest, ApiResponse{
+		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: "Invalid ID",
 		})
@@ -23,14 +24,14 @@ func GetUser(c *gin.Context) {
 	var user models.User
 	if err := database.DB.First(&user, id).Error; err != nil {
 		utils.LogError(err, "Error retrieving user from database")
-		c.JSON(http.StatusInternalServerError, ApiResponse{
+		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, ApiResponse{
+	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
 		Message: "User retrieved successfully",
 		Data:    user,
@@ -41,7 +42,7 @@ func UpdateUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
 		utils.LogError(err, "Error binding JSON to user model")
-		c.JSON(http.StatusBadRequest, ApiResponse{
+		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
 		})
@@ -50,14 +51,14 @@ func UpdateUser(c *gin.Context) {
 
 	if err := database.DB.Save(&user).Error; err != nil {
 		utils.LogError(err, "Error saving user to database")
-		c.JSON(http.StatusInternalServerError, ApiResponse{
+		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, ApiResponse{
+	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
 		Message: "User updated successfully",
 		Data:    user,

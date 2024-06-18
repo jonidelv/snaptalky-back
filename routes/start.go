@@ -8,6 +8,7 @@ import (
 	"snaptalky/database"
 	"snaptalky/models"
 	"snaptalky/utils"
+	"snaptalky/utils/types"
 )
 
 type startRequest struct {
@@ -18,7 +19,7 @@ func StartApp(c *gin.Context) {
 	var req startRequest
 	if err := c.BindJSON(&req); err != nil {
 		utils.LogError(err, "Invalid request payload")
-		c.JSON(http.StatusBadRequest, ApiResponse{
+		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: "Invalid request",
 		})
@@ -28,7 +29,7 @@ func StartApp(c *gin.Context) {
 	tknHeader := c.GetHeader("tkn")
 	startToken := os.Getenv("START_TOKEN")
 	if tknHeader != startToken {
-		c.JSON(http.StatusUnauthorized, ApiResponse{
+		c.JSON(http.StatusUnauthorized, types.ApiResponse{
 			Status:  "error",
 			Message: "Unauthorized",
 		})
@@ -37,7 +38,7 @@ func StartApp(c *gin.Context) {
 
 	deviceID := req.DeviceID
 	if deviceID == "" {
-		c.JSON(http.StatusBadRequest, ApiResponse{
+		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: "device_id is required",
 		})
@@ -47,7 +48,7 @@ func StartApp(c *gin.Context) {
 	appToken := os.Getenv("APP_TOKEN")
 	if appToken == "" {
 		utils.LogError(nil, "APP_TOKEN not set in environment")
-		c.JSON(http.StatusInternalServerError, ApiResponse{
+		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: "APP_TOKEN not set in environment",
 		})
@@ -65,7 +66,7 @@ func StartApp(c *gin.Context) {
 			}
 			if err := database.DB.Create(&user).Error; err != nil {
 				utils.LogError(err, "Error creating user")
-				c.JSON(http.StatusInternalServerError, ApiResponse{
+				c.JSON(http.StatusInternalServerError, types.ApiResponse{
 					Status:  "error",
 					Message: "Error creating user",
 				})
@@ -73,7 +74,7 @@ func StartApp(c *gin.Context) {
 			}
 		} else {
 			utils.LogError(err, "Database error")
-			c.JSON(http.StatusInternalServerError, ApiResponse{
+			c.JSON(http.StatusInternalServerError, types.ApiResponse{
 				Status:  "error",
 				Message: "Database error",
 			})
@@ -81,7 +82,7 @@ func StartApp(c *gin.Context) {
 		}
 	}
 
-	c.JSON(http.StatusOK, ApiResponse{
+	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
 		Message: "User retrieved/created successfully",
 		Data: gin.H{

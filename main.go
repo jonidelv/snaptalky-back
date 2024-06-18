@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"snaptalky/database"
+	"snaptalky/models"
 	"snaptalky/routes"
 )
 
@@ -24,6 +25,9 @@ func main() {
 
 	// Connect to the database
 	database.ConnectDatabase()
+
+	// Auto migrate models
+	models.InitModels()
 
 	// Initialize the Gin router
 	r := gin.Default()

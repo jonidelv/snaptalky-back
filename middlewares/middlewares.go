@@ -4,14 +4,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"os"
-	"snaptalky/routes"
+	"snaptalky/utils/types"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		token := c.GetHeader("Authorization")
 		if token == "" {
-			c.JSON(http.StatusUnauthorized, routes.ApiResponse{
+			c.JSON(http.StatusUnauthorized, types.ApiResponse{
 				Status:  "error",
 				Message: "Authorization header is required",
 			})
@@ -21,7 +21,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		appToken := os.Getenv("APP_TOKEN")
 		if token != appToken {
-			c.JSON(http.StatusUnauthorized, routes.ApiResponse{
+			c.JSON(http.StatusUnauthorized, types.ApiResponse{
 				Status:  "error",
 				Message: "Invalid token",
 			})
