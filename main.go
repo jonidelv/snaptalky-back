@@ -32,21 +32,28 @@ func main() {
 	// Initialize the Gin router
 	r := gin.Default()
 
+	// Enable the RemoveExtraSlash middleware
+	r.RemoveExtraSlash = true
+
 	// Setup routes
 	routes.SetupRoutes(r)
 
-	// Get the port from the environment, or use default
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080"
 	}
 
-	// Run the server
-	r.Run(":" + port)
+	host := os.Getenv("HOST")
+	if host == "" {
+		host = "127.0.0.1"
+	}
 
-	// Run the server with TLS
-	//log.Printf("Listening and serving HTTPS on :%s\n", port)
-	//if err := r.RunTLS(":"+port, "cer/cert.pem", "cer/key.pem"); err != nil {
-	//	log.Fatalf("Failed to run server: %v", err)
-	//}
+	hostPort := host + ":" + port
+
+	// Starting the server
+	err := r.Run(hostPort)
+	if err != nil {
+		log.Printf("Error starting server: %v", err)
+		return
+	}
 }
