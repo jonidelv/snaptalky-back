@@ -27,7 +27,7 @@ func StartApp(c *gin.Context) {
 		return
 	}
 
-	tknHeader := c.GetHeader("id") // This is the token coming from the app calling it id ;)
+	tknHeader := c.GetHeader("ids") // This is the token coming from the app calling it ids ;)
 	startToken := os.Getenv("START_TOKEN")
 	if tknHeader != startToken {
 		c.JSON(http.StatusUnauthorized, types.ApiResponse{
@@ -84,12 +84,24 @@ func StartApp(c *gin.Context) {
 		}
 	}
 
+	appUser := types.AppUser{
+		ID:                 user.ID,
+		DeviceID:           user.DeviceID,
+		Age:                user.Age,
+		Gender:             user.Gender,
+		Bio:                user.Bio,
+		PublicID:           user.PublicID,
+		IsPremium:          user.IsPremium,
+		CommunicationStyle: user.CommunicationStyle,
+		Tone:               user.Tone,
+	}
+
 	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
 		Message: "User retrieved/created successfully",
 		Data: gin.H{
-			"user": user,
-			"id":   appToken, // This is the token but we call it id
+			"user": appUser,
+			"ids":  appToken, // This is the token, but we call it ids ;)
 		},
 	})
 }
