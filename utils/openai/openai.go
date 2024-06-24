@@ -1,11 +1,9 @@
 package openai
 
 import (
-	"bytes"
-	"encoding/json"
 	"fmt"
+	"github.com/go-resty/resty/v2"
 	"log"
-	"net/http"
 	"os"
 	"snaptalky/utils"
 )
@@ -35,39 +33,20 @@ func CallOpenaiApi(contentPayload []Content) (string, error) {
 		},
 	}
 
-	reqBodyBytes, err := json.Marshal(reqBody)
-	if err != nil {
-		utils.LogError(err, "Error marshaling request body")
-		return "", err
-	}
+	client := resty.New()
+	resp, err := client.R().
+		SetHeader("Content-Type", "application/json").
+		SetHeader("Authorization", "Bearer "+os.Getenv("OPENAI_API_KEY")).
+		SetBody(reqBody).
+		SetResult(&ApiResponse{}).
+		Post("https://api.openai.com/v1/chat/completions")
 
-	req, err := http.NewRequest("POST", "https://api.openai.com/v1/chat/completions", bytes.NewBuffer(reqBodyBytes))
-	if err != nil {
-		utils.LogError(err, "Error creating new request")
-		return "", err
-	}
-
-	req.Header.Set("Content-Type", "application/json")
-	req.Header.Set("Authorization", "Bearer "+os.Getenv("OPENAI_API_KEY"))
-
-	client := &http.Client{}
-	resp, err := client.Do(req)
 	if err != nil {
 		utils.LogError(err, "Error making API request")
 		return "", err
 	}
 
-	defer func() {
-		if cErr := resp.Body.Close(); cErr != nil {
-			utils.LogError(cErr, "Error closing response body")
-		}
-	}()
-
-	var apiResponse ApiResponse
-	if err := json.NewDecoder(resp.Body).Decode(&apiResponse); err != nil {
-		utils.LogError(err, "Error decoding response")
-		return "", err
-	}
+	apiResponse := resp.Result().(*ApiResponse)
 
 	if len(apiResponse.Choices) == 0 {
 		err := fmt.Errorf("no choices in response")
