@@ -1,6 +1,9 @@
 package types
 
-import "snaptalky/models"
+import (
+	"github.com/google/uuid"
+	"snaptalky/models"
+)
 
 // ApiResponse Used in any api response/endpoint
 type ApiResponse struct {
@@ -18,7 +21,7 @@ type DataToBuildResponses struct {
 }
 
 type AppUser struct {
-	ID                 uint                      `json:"id"`
+	ID                 uuid.UUID                 `json:"id"`
 	DeviceID           string                    `json:"device_id"`
 	Age                int                       `json:"age,omitempty"`
 	Gender             models.Gender             `json:"gender,omitempty"`

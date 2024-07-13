@@ -37,7 +37,7 @@ const (
 )
 
 type User struct {
-	ID                 uint               `json:"id" gorm:"primaryKey"`
+	ID                 uuid.UUID          `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
 	DeviceID           string             `json:"device_id" gorm:"uniqueIndex"`
 	Platform           string             `json:"platform,omitempty"`
 	Age                int                `json:"age,omitempty"`
