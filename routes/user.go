@@ -7,23 +7,12 @@ import (
 	"snaptalky/models"
 	"snaptalky/utils"
 	"snaptalky/utils/types"
-	"strconv"
 )
 
 func GetUser(c *gin.Context) {
-	id, err := strconv.Atoi(c.Param("id"))
+	//id := c.Param("id")
+	appUser, err := getUserFromContext(c)
 	if err != nil {
-		utils.LogError(err, "Invalid ID format")
-		c.JSON(http.StatusBadRequest, types.ApiResponse{
-			Status:  "error",
-			Message: "Invalid ID",
-		})
-		return
-	}
-
-	var user models.User
-	if err := database.DB.First(&user, id).Error; err != nil {
-		utils.LogError(err, "Error retrieving user from database")
 		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
@@ -34,7 +23,7 @@ func GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
 		Message: "User retrieved successfully",
-		Data:    user,
+		Data:    appUser,
 	})
 }
 
@@ -58,9 +47,11 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
+	appUser := getAppUser(user)
+
 	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
 		Message: "User updated successfully",
-		Data:    user,
+		Data:    appUser,
 	})
 }

@@ -71,3 +71,5 @@ var FriendlyTones = [22]Tone{
 	{key: "deeptopic", emoji: "🔍", value: "Dive deeper into a topic"},
 	{key: "lightenmood", emoji: "🎈", value: "Lighten the mood"},
 }
+
+const TokenValidDays = 30

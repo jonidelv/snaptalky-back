@@ -1,8 +1,11 @@
 package routes
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"snaptalky/middlewares"
+	"snaptalky/models"
+	"snaptalky/utils/types"
 )
 
 func SetupRoutes(router *gin.Engine) {
@@ -17,4 +20,41 @@ func SetupRoutes(router *gin.Engine) {
 
 	startRoutes := router.Group("/start")
 	startRoutes.POST("", StartApp)
+}
+
+func getUserFromContext(c *gin.Context) (models.User, error) {
+	user, exists := c.Get("user")
+	if !exists {
+		return models.User{}, errors.New("user not found in context")
+	}
+
+	userTyped := user.(models.User)
+	return userTyped, nil
+}
+
+func getAppUserFromContext(c *gin.Context) (types.AppUser, error) {
+	user, exists := c.Get("user")
+	if !exists {
+		return types.AppUser{}, errors.New("user not found in context")
+	}
+
+	userTyped := user.(models.User)
+	appUser := getAppUser(userTyped)
+	return appUser, nil
+}
+
+func getAppUser(user models.User) types.AppUser {
+	appUser := types.AppUser{
+		ID:                 user.ID,
+		DeviceID:           user.DeviceID,
+		Age:                user.Age,
+		Gender:             user.Gender,
+		Bio:                user.Bio,
+		PublicID:           user.PublicID,
+		IsPremium:          user.IsPremium,
+		CommunicationStyle: user.CommunicationStyle,
+		Tone:               user.Tone,
+	}
+
+	return appUser
 }
