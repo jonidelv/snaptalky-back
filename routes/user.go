@@ -22,7 +22,7 @@ func GetUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
-		Message: "User retrieved successfully",
+		Message: "user retrieved successfully",
 		Data:    appUser,
 	})
 }
@@ -30,7 +30,7 @@ func GetUser(c *gin.Context) {
 func UpdateUser(c *gin.Context) {
 	var user models.User
 	if err := c.ShouldBindJSON(&user); err != nil {
-		utils.LogError(err, "Error binding JSON to user model")
+		utils.LogError(err, "error binding JSON to user model")
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
@@ -51,7 +51,7 @@ func UpdateUser(c *gin.Context) {
 
 	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
-		Message: "User updated successfully",
+		Message: "user updated successfully",
 		Data:    appUser,
 	})
 }

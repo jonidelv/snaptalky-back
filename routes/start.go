@@ -27,7 +27,7 @@ func StartApp(c *gin.Context) {
 		utils.LogError(err, "Invalid request payload")
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
-			Message: "Invalid request",
+			Message: "invalid request",
 		})
 		return
 	}
@@ -37,7 +37,7 @@ func StartApp(c *gin.Context) {
 	if tknHeader != startToken {
 		c.JSON(http.StatusUnauthorized, types.ApiResponse{
 			Status:  "error",
-			Message: "Unauthorized",
+			Message: "unauthorized",
 		})
 		return
 	}
@@ -65,7 +65,7 @@ func StartApp(c *gin.Context) {
 				utils.LogError(err, "Error creating user")
 				c.JSON(http.StatusInternalServerError, types.ApiResponse{
 					Status:  "error",
-					Message: "Error creating user",
+					Message: "error creating user",
 				})
 				return
 			}
@@ -73,7 +73,7 @@ func StartApp(c *gin.Context) {
 			utils.LogError(err, "Database error")
 			c.JSON(http.StatusInternalServerError, types.ApiResponse{
 				Status:  "error",
-				Message: "Database error",
+				Message: "database error",
 			})
 			return
 		}
@@ -84,7 +84,7 @@ func StartApp(c *gin.Context) {
 		utils.LogError(err, "APP_TOKEN creation failed")
 		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
-			Message: "APP_TOKEN creation failed",
+			Message: "app token creation failed",
 		})
 		return
 	}
@@ -93,7 +93,7 @@ func StartApp(c *gin.Context) {
 
 	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
-		Message: "User retrieved/created successfully",
+		Message: "user retrieved/created successfully",
 		Data: gin.H{
 			"user": appUser,
 			"ids":  appToken, // This is the token, but we call it ids ;)
