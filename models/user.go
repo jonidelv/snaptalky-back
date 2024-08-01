@@ -64,7 +64,9 @@ func (u *User) BeforeCreate(tx *gorm.DB) (err error) {
 	return nil
 }
 
-// IncrementScanCount UserIncrementScanCount IncrementScanCount atomically increments the ScanCount for the user.
+// IncrementScanCount increments the ScanCount field for the User instance.
+// This operation is performed atomically to ensure thread safety.
+// It updates the scan_count column in the database by incrementing its value by 1.
 func (u *User) IncrementScanCount() error {
 	return database.DB.Model(u).Where("id = ?", u.ID).UpdateColumn(
 		"scan_count", gorm.Expr("scan_count + ?", 1),
