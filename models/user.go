@@ -51,6 +51,7 @@ type User struct {
 	Tone               Tone               `json:"tone" gorm:"default:friendly"`
 	UpdatedAt          time.Time          `json:"updated_at" gorm:"autoUpdateTime"`
 	CreatedAt          time.Time          `json:"created_at" gorm:"autoCreateTime"`
+	DeletedAt          time.Time          `json:"deleted_at" gorm:"autoDeleteTime"`
 }
 
 func (u *User) BeforeCreate(tx *gorm.DB) (err error) {

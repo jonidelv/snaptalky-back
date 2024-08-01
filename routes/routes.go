@@ -32,17 +32,6 @@ func getUserFromContext(c *gin.Context) (models.User, error) {
 	return userTyped, nil
 }
 
-func getAppUserFromContext(c *gin.Context) (types.AppUser, error) {
-	user, exists := c.Get("user")
-	if !exists {
-		return types.AppUser{}, errors.New("user not found in context")
-	}
-
-	userTyped := user.(models.User)
-	appUser := getAppUser(userTyped)
-	return appUser, nil
-}
-
 func getAppUser(user models.User) types.AppUser {
 	appUser := types.AppUser{
 		ID:                 user.ID,

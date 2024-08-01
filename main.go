@@ -11,31 +11,21 @@ import (
 )
 
 func main() {
-	// Load environment variables
 	if err := godotenv.Load(); err != nil {
 		log.Fatal("Error loading .env file")
 	}
 
-	// Set Gin mode based on GIN_MODE environment variable
 	ginMode := os.Getenv("GIN_MODE")
 	if ginMode == "" {
 		ginMode = gin.DebugMode
 	}
 	gin.SetMode(ginMode)
-
-	// Connect to the database
 	database.ConnectDatabase()
-
-	// Auto migrate models
 	models.AutoMigrateModels()
 
 	// Initialize the Gin router
 	r := gin.Default()
-
-	// Enable the RemoveExtraSlash middleware
 	r.RemoveExtraSlash = true
-
-	// Setup routes
 	routes.SetupRoutes(r)
 
 	port := os.Getenv("PORT")
