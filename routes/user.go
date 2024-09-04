@@ -5,41 +5,13 @@ import (
 	"net/http"
 	"snaptalky/database"
 	"snaptalky/models"
-	"snaptalky/utils"
 	"snaptalky/utils/types"
 )
 
 func GetUser(c *gin.Context) {
 	//id := c.Param("id")
-	appUser, err := getUserFromContext(c)
+	user, err := getUserFromContext(c)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, types.ApiResponse{
-			Status:  "error",
-			Message: err.Error(),
-		})
-		return
-	}
-
-	c.JSON(http.StatusOK, types.ApiResponse{
-		Status:  "success",
-		Message: "user retrieved successfully",
-		Data:    appUser,
-	})
-}
-
-func UpdateUser(c *gin.Context) {
-	var user models.User
-	if err := c.ShouldBindJSON(&user); err != nil {
-		utils.LogError(err, "error binding JSON to user model")
-		c.JSON(http.StatusBadRequest, types.ApiResponse{
-			Status:  "error",
-			Message: err.Error(),
-		})
-		return
-	}
-
-	if err := database.DB.Save(&user).Error; err != nil {
-		utils.LogError(err, "Error saving user to database")
 		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
@@ -49,6 +21,65 @@ func UpdateUser(c *gin.Context) {
 
 	appUser := getAppUser(user)
 
+	c.JSON(http.StatusOK, types.ApiResponse{
+		Status:  "success",
+		Message: "user retrieved successfully",
+		Data:    appUser,
+	})
+}
+
+type UpdateUserInput struct {
+	Age                *int                       `json:"age,omitempty"`
+	Gender             *models.Gender             `json:"gender,omitempty"`
+	Bio                *string                    `json:"bio,omitempty"`
+	CommunicationStyle *models.CommunicationStyle `json:"communicationStyle,omitempty"`
+}
+
+func UpdateUser(c *gin.Context) {
+	// Retrieve the existing user from the context
+	user, err := getUserFromContext(c)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, types.ApiResponse{
+			Status:  "error",
+			Message: "failed to get user from context",
+		})
+		return
+	}
+
+	var input UpdateUserInput
+	if err := c.ShouldBindJSON(&input); err != nil {
+		c.JSON(http.StatusBadRequest, types.ApiResponse{
+			Status:  "error",
+			Message: err.Error(),
+		})
+		return
+	}
+
+	// Apply updates to the user object
+	if input.Age != nil {
+		user.Age = *input.Age
+	}
+	if input.Gender != nil {
+		user.Gender = *input.Gender
+	}
+	if input.Bio != nil {
+		user.Bio = *input.Bio
+	}
+	if input.CommunicationStyle != nil {
+		user.CommunicationStyle = *input.CommunicationStyle
+	}
+
+	if err := database.DB.Save(&user).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, types.ApiResponse{
+			Status:  "error",
+			Message: "failed to update user in database",
+		})
+		return
+	}
+
+	appUser := getAppUser(user)
+
+	// Return the updated user
 	c.JSON(http.StatusOK, types.ApiResponse{
 		Status:  "success",
 		Message: "user updated successfully",

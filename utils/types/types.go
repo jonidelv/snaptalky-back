@@ -22,12 +22,11 @@ type DataToBuildResponses struct {
 
 type AppUser struct {
 	ID                 uuid.UUID                 `json:"id"`
-	DeviceID           string                    `json:"device_id"`
+	DeviceID           string                    `json:"deviceID"`
 	Age                int                       `json:"age,omitempty"`
 	Gender             models.Gender             `json:"gender,omitempty"`
 	Bio                string                    `json:"bio,omitempty"`
-	PublicID           string                    `json:"public_id"`
-	IsPremium          bool                      `json:"is_premium"`
-	CommunicationStyle models.CommunicationStyle `json:"communication_style"`
-	Tone               models.Tone               `json:"tone"`
+	PublicID           string                    `json:"publicID"`
+	IsPremium          bool                      `json:"isPremium"`
+	CommunicationStyle models.CommunicationStyle `json:"communicationStyle"`
 }

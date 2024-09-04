@@ -17,7 +17,7 @@ import (
 )
 
 type startRequest struct {
-	DeviceID string `json:"device_id"`
+	DeviceID string `json:"deviceID"`
 	Platform string `json:"platform"`
 }
 
@@ -46,7 +46,7 @@ func StartApp(c *gin.Context) {
 	if deviceID == "" {
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
-			Message: "device_id is required",
+			Message: "deviceID is required",
 		})
 		return
 	}
@@ -104,7 +104,7 @@ func StartApp(c *gin.Context) {
 func createJWTToken(userID uuid.UUID) (string, error) {
 	tokenKey := os.Getenv("TOKEN_KEY")
 	if tokenKey == "" {
-		return "", fmt.Errorf("empty TOKEN_KEY")
+		return "", fmt.Errorf("empty token key")
 	}
 
 	issuedAt := time.Now()

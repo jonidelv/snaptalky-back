@@ -12,7 +12,7 @@ func SetupRoutes(router *gin.Engine) {
 	userRoutes := router.Group("/user")
 	userRoutes.Use(middlewares.AuthMiddleware())
 	userRoutes.GET("/:id", GetUser)
-	userRoutes.PUT("", UpdateUser)
+	userRoutes.PATCH("/:id", UpdateUser)
 
 	scanRoutes := router.Group("/scan")
 	scanRoutes.Use(middlewares.AuthMiddleware())
@@ -42,7 +42,6 @@ func getAppUser(user models.User) types.AppUser {
 		PublicID:           user.PublicID,
 		IsPremium:          user.IsPremium,
 		CommunicationStyle: user.CommunicationStyle,
-		Tone:               user.Tone,
 	}
 
 	return appUser
