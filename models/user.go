@@ -30,10 +30,9 @@ type Tone string
 
 // Tone enum values
 const (
-	ToneFlirting     Tone = "flirting"
-	ToneFriendly     Tone = "friendly"
-	ToneProfessional Tone = "professional"
-	ToneCustom       Tone = "custom"
+	ToneFlirting Tone = "flirting"
+	ToneFriendly Tone = "friendly"
+	ToneFormal   Tone = "formal"
 )
 
 type User struct {

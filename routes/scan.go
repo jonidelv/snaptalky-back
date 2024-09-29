@@ -9,11 +9,11 @@ import (
 )
 
 type DataRequest struct {
-	UserID  string `json:"id"`
-	Text    string `json:"text"`
-	Context string `json:"context"`
-	Tone    string `json:"tone"`
-	Image   string `json:"image"`
+	Text        string `json:"text"`
+	Image       string `json:"image"`
+	Tone        string `json:"tone" binding:"oneof=flirting friendly formal"`
+	Context     string `json:"context"`
+	ContextText string `json:"customToneText"`
 }
 
 func ProcessResponse(c *gin.Context) {
@@ -29,9 +29,9 @@ func ProcessResponse(c *gin.Context) {
 
 	openAIData := types.DataToBuildResponses{
 		Text:    data.Text,
+		Image:   data.Image,
 		Context: data.Context,
 		Tone:    data.Tone,
-		Image:   data.Image,
 	}
 
 	response, err := openai.GenerateResponses(&openAIData)
