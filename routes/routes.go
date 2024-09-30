@@ -18,6 +18,10 @@ func SetupRoutes(router *gin.Engine) {
 	scanRoutes.Use(middlewares.AuthMiddleware())
 	scanRoutes.POST("", ProcessResponse)
 
+	responseRoutes := router.Group("/response")
+	responseRoutes.Use(middlewares.AuthMiddleware())
+	responseRoutes.POST("", SaveResponse)
+
 	startRoutes := router.Group("/start")
 	startRoutes.POST("", StartApp)
 }

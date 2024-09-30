@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"snaptalky/database"
-	"snaptalky/models"
 	"snaptalky/utils/types"
 )
 
@@ -29,10 +28,10 @@ func GetUser(c *gin.Context) {
 }
 
 type UpdateUserInput struct {
-	Age                *int                       `json:"age,omitempty"`
-	Gender             *models.Gender             `json:"gender,omitempty"`
-	Bio                *string                    `json:"bio,omitempty"`
-	CommunicationStyle *models.CommunicationStyle `json:"communicationStyle,omitempty"`
+	Age                *int    `json:"age,omitempty"`
+	Gender             *string `json:"gender,omitempty" binding:"oneof=male female other"`
+	Bio                *string `json:"bio,omitempty"`
+	CommunicationStyle *string `json:"communicationStyle,omitempty" binding:"oneof=default direct passive"`
 }
 
 func UpdateUser(c *gin.Context) {
