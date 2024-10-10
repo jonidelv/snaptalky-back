@@ -8,13 +8,8 @@ import (
 
 type Response struct {
 	RespondedOk bool     `json:"respondedOk"`
-	Language    string   `json:"language"`
-	Answers     []string `json:"answers"`
-	Tones       struct {
-		FlirtingTones     []string `json:"flirtingTones"`
-		ProfessionalTones []string `json:"professionalTones"`
-		FriendlyTones     []string `json:"friendlyTones"`
-	} `json:"tones"`
+	Responses   []string `json:"responses"`
+	Suggestions []string `json:"suggestions"`
 }
 
 func GenerateResponses(dataToBuildResponse *types.DataToBuildResponses) (Response, error) {

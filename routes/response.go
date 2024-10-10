@@ -46,6 +46,7 @@ func SaveResponse(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, types.ApiResponse{
+		Data:    struct{}{}, // Empty object
 		Status:  "success",
 		Message: "response saved successfully",
 	})

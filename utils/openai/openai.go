@@ -23,8 +23,8 @@ type ApiResponse struct {
 
 func CallOpenaiApi(contentPayload []Content) (string, error) {
 	reqBody := map[string]interface{}{
-		"model":      "gpt-4o-20240513",
-		"max_tokens": 200,
+		"model":      "chatgpt-4o-latest",
+		"max_tokens": 1000,
 		"messages": []map[string]interface{}{
 			{
 				"role":    "user",
@@ -56,6 +56,8 @@ func CallOpenaiApi(contentPayload []Content) (string, error) {
 
 	log.Printf("Prompt Tokens: %d, Completion Tokens: %d, Total Tokens: %d",
 		apiResponse.Usage.PromptTokens, apiResponse.Usage.CompletionTokens, apiResponse.Usage.TotalTokens)
+
+	fmt.Println(apiResponse.Choices[0].Message.Content)
 
 	return apiResponse.Choices[0].Message.Content, nil
 }

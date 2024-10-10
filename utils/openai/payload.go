@@ -46,43 +46,111 @@ type Content interface {
 }
 
 func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
-	var promptTemplate string
-	switch data.Context {
+	// TEMPLATES
+	// Tone
+	var toneTemplate string
+	switch data.Tone {
 	case "flirting":
-		promptTemplate = `Act as the go-to texting assistant for contemporary charm in flirting scenarios, with a repertoire that includes the latest trends, new slang, and a humorous twist. It's programmed to adapt to the user's conversational style, mimicking their mannerisms and preferences to keep the interaction authentic. Be concise and act like an 18-year-old big brother. When responding, assess the user's CONTEXT and TONE provided at the end of this message and incorporate similar language and humor, ensuring a seamless exchange that feels natural. In ambiguous situations, ask for clarifications rather than making assumptions. Your objective is to provide personalized, witty advice for a user trying to interact with a potential dating partner via text, hinge, or tinder. Use this CONTEXT %s and this TONE %s. Respond using this prompt to %s: %s. `
-	case "professional":
-		promptTemplate = `Act as the go-to texting assistant for contemporary charm in professional interactions, with a repertoire that includes the latest trends, new slang, and a professional twist. It's programmed to adapt to the user's conversational style, mimicking their mannerisms and preferences to keep the interaction authentic. Be concise and act like an 18-year-old big brother. When responding, assess the user's CONTEXT and TONE provided at the end of this message and incorporate similar language and professionalism, ensuring a seamless exchange that feels natural. In ambiguous situations, ask for clarifications rather than making assumptions. Your objective is to provide personalized, professional advice for a user interacting with a boss or colleague via text or apps like LinkedIn or Slack. Use this CONTEXT %s and this TONE %s. Respond using this prompt to %s: %s. `
-	case "custom":
-		promptTemplate = `Act as the go-to texting assistant, with a repertoire that includes the latest trends, new slang, and an appropriate tone. It's programmed to adapt to the user's conversational style, mimicking their mannerisms and preferences to keep the interaction authentic. Be concise and act like an 18-year-old big brother. When responding, assess the user's CONTEXT and TONE provided at the end of this message and incorporate similar language and sensitivity, ensuring a seamless exchange that feels natural. In ambiguous situations, ask for clarifications rather than making assumptions. Your objective is to provide personalized advice for a user interacting with someone in a custom context. Use this CONTEXT %s and this custom TONE %s. Respond using this prompt to %s: %s. `
+		toneTemplate = `Act as the go-to texting assistant for contemporary charm in flirting scenarios, with a 
+repertoire that includes the latest trends, new slang, and a humorous twist. Be concise and respond short, 
+not acting like an AI but rather as a human responding to a message. Your objective is to provide 
+personalized, witty advice for a user trying to interact with a potential dating partner via text, hinge, 
+or tinder.`
+	case "formal":
+		toneTemplate = `Act as the go-to texting assistant for contemporary charm in professional interactions, 
+with a repertoire that includes the latest trends, new slang, and a professional twist. Be concise and 
+respond short, not acting like an AI but rather as a human responding to a message. Your objective is to 
+provide personalized, professional or formal advice for a user interacting with a boss, colleague or friend 
+in a formal way via text or apps like LinkedIn or Slack.`
 	case "friendly":
 		fallthrough
 	default:
-		promptTemplate = `Act as the go-to texting assistant for contemporary charm in friendly interactions, with a repertoire that includes the latest trends, new slang, and a humorous twist. It's programmed to adapt to the user's conversational style, mimicking their mannerisms and preferences to keep the interaction authentic. Be concise and act like an 18-year-old big brother. When responding, assess the user's CONTEXT and TONE provided at the end of this message and incorporate similar language and humor, ensuring a seamless exchange that feels natural. In ambiguous situations, ask for clarifications rather than making assumptions. Your objective is to provide personalized, witty advice for a user interacting with a friend via text or apps like Instagram or Snapchat. Use this CONTEXT %s and this TONE %s. Respond using this prompt to %s: %s. `
+		toneTemplate = `Act as the go-to texting assistant for contemporary charm in friendly interactions, with 
+a repertoire that includes the latest trends, new slang, and a humorous twist. Be concise and respond 
+short, not acting like an AI but rather as a human responding to a message. Your objective is to provide 
+personalized, witty advice for a user interacting with a friend via text or apps like Instagram or 
+Snapchat. Respond in a friendly way.`
 	}
 
-	comesWithImage := data.Image != ""
-	inputType, inputContent := "this text message", data.Text
-
-	if comesWithImage {
-		inputType, inputContent = "the image I will provide below", data.Image
+	// Additional context
+	var additionalContextTemplate string
+	hasText := data.Text != nil && *data.Text != ""
+	hasContextText := data.ContextText != nil && *data.ContextText != ""
+	prefix := `This is additional context passed by the user to use when building the responses to this message, use 
+this information only if you think provide additional information that can be useful in order to build the response.`
+	switch {
+	case hasText && hasContextText:
+		additionalContextTemplate = fmt.Sprintf(`%s %s %s.`, prefix, *data.Text, *data.ContextText)
+	case hasText:
+		additionalContextTemplate = fmt.Sprintf(`%s %s.`, prefix, *data.Text)
+	case hasContextText:
+		additionalContextTemplate = fmt.Sprintf(`%s %s.`, prefix, *data.ContextText)
+	default:
+		additionalContextTemplate = ""
 	}
 
-	var prompt = fmt.Sprintf(promptTemplate, data.Context, data.Tone, inputType, inputContent)
+	//Location
+	var locationTemplate string
+	hasLocation := data.Location != nil && *data.Location != ""
+	switch {
+	case hasLocation:
+		locationTemplate = fmt.Sprintf(`Use this location: %s to buil the answers in a way someone from this locaton 
+would respond, use the slangs and modisms fromt the location provided.`, *data.Location)
+	default:
+		locationTemplate = ""
+	}
 
-	extractLanguage := `Extract the language from the image or text I am passing that needs an answer to, and put it in the language key in the response format. `
-	translateTones := `I'll specify different tones, you need to translate those tones to the language of the image or the text you are answering to. Here are the different tones that you need to translate and then add to the response: flirtingTones = ["💬 Answer short & crisp","🗣️ Answer long & detailed","❓ Ask a question","❤️ Ask for date","😏 Be cocky & funny","😇 Tease playfully","🤔 Ask intriguing questions","💞 Show affection","🌸 Compliment their style","🌹 Be romantic","🎭 Use role-playing","🕹️ Suggest a fun game","😁 Make them laugh","👻 Be a bit mysterious","🕵️‍♀️ Imagining future together","🍫 Sensual Descriptions","💌 Send a love quote","🎶 Dedicate a song","🌇 Ask about favorite activities","🌠 Ask about their wishes","💫 Make a flirtatious comment","🔍 Dive deeper into a topic","🌙 Wish sweet dreams"]; professionalTones = ["💬 Answer short & crisp","🗣️ Answer long & detailed","❓ Ask a question","👍 Agree with their point","🚫 Disagree respectfully","❓ Ask for clarification","🔄 Change the topic","🗣️ Express your opinion","💬 Paraphrase their point","🎈 Lighten the mood","💼 Stay professional","💬 Start a debate"]; friendlyTones = ["💬 Answer short & crisp","🗣️ Answer long & detailed","❓ Ask a question","😏 Be cocky & funny","😇 Tease playfully","🤔 Ask intriguing questions","👍 Agree with their point","🚫 Disagree respectfully","❓ Ask for clarification","🔄 Change the topic","🗣️ Express your opinion","💬 Paraphrase their point","💞 Show affection","🌸 Compliment their style","😁 Make them laugh","👻 Be a bit mysterious","🎶 Dedicate a song","🌇 Ask about favorite activities","🌠 Ask about their wishes","💫 Make a flirtatious comment","🔍 Dive deeper into a topic","🎈 Lighten the mood"]. `
-	give5AnswersShort := `This is a response to a chat. Make the answers short. Give 5 possible answers/responses in the format specified below. `
-	respondFormat := `Respond in the following format only (so I can transform this string response into JSON with JSON.parse): {"respondedOk":true,"language":"language","answers":["answer 1","answer 2","answer 3","answer 4","answer 5"],"tones":{"flirtingTones":["💬 Answer short & crisp","... translated flirtingTones"],"professionalTones":["💬 Answer short & crisp","... translated professionalTones"],"friendlyTones":["💬 Answer short & crisp","... translated friendlyTones"]}} `
-	responseNotSuccessful := `If the context of the image or the message I'm passing to respond to is not a message from a chat or not something this AI can respond to as a text or in the context of a chat, respond in the following format only (so I can transform this string response into JSON with JSON.parse): {"respondedOk":false,"language":"language"}`
+	// Context
+	var contextTemplate string
+	hasContext := data.Context != nil && *data.Context != ""
+	prefix = `THE GENERATED RESPONSES NEED TO BE ONLY IN THIS WAY!: `
+	switch {
+	case hasContext:
+		contextTemplate = fmt.Sprintf(`%s %s.`, prefix, *data.Context)
+	default:
+		contextTemplate = ""
+	}
 
-	prompt = give5AnswersShort + extractLanguage + translateTones + respondFormat + responseNotSuccessful
+	// User input
+	var userInputTemplate string
+	hasImage := data.Image != nil && *data.Image != ""
+	switch {
+	case hasImage:
+		userInputTemplate = "The responses to be generated needs to be based on the image passed as base64"
+	default:
+		userInputTemplate = fmt.Sprintf("The responses to be generated needs to be a response to this USER INPUT -> %s", *data.Text)
+	}
+
+	templates := fmt.Sprintf("%s %s %s %s %s.", toneTemplate, additionalContextTemplate, locationTemplate, contextTemplate, userInputTemplate)
+
+	//FORMATS
+	// 8 Responses
+	give8AnswersFormat := `This is a response to a chat. Make the answers short. Give 8 possible answers/responses in the 
+format specified next: `
+
+	// Format
+	respondFormat := `Respond in the following format only (so I can transform this string response into JSON with JSON.parse): 
+{"respondedOk":true,"responses":["responses 1","responses 2","responses 3","responses 4","responses 5", "responses 6", "responses 7", "responses 8"]}`
+
+	// Language
+	languageFormart := `Extract the language from the image or USER INPUT I am passing that needs an answer to, and use it 
+to RESPOND WITH THE RESPONSES!`
+
+	// Input is not a chat
+	inputNotChatFormat := `If the image or the USER INPUT I'm passing to respond to is not a message from 
+a chat or not something this AI can respond to as a text or in the context of a chat, respond in the following format 
+only (so I can transform this string response into JSON with JSON.parse): {"respondedOk":false}`
+
+	formats := fmt.Sprintf("%s %s %s %s", give8AnswersFormat, respondFormat, languageFormart, inputNotChatFormat)
+
+	prompt := templates + formats
 
 	content := []Content{
 		NewTextContent(prompt),
 	}
 
-	if comesWithImage {
-		content = append(content, NewImageContent(data.Image))
+	if hasImage {
+		content = append(content, NewImageContent(*data.Image))
 	}
 
 	return content

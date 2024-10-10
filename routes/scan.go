@@ -8,30 +8,15 @@ import (
 	"snaptalky/utils/types"
 )
 
-type DataRequest struct {
-	Text        string `json:"text"`
-	Image       string `json:"image"`
-	Tone        string `json:"tone" binding:"oneof=flirting friendly formal"`
-	Context     string `json:"context"`
-	ContextText string `json:"customToneText"`
-}
-
 func ProcessResponse(c *gin.Context) {
-	var data DataRequest
+	var openAIData types.DataToBuildResponses
 
-	if err := c.ShouldBindJSON(&data); err != nil {
+	if err := c.ShouldBindJSON(&openAIData); err != nil {
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
 		})
 		return
-	}
-
-	openAIData := types.DataToBuildResponses{
-		Text:    data.Text,
-		Image:   data.Image,
-		Context: data.Context,
-		Tone:    data.Tone,
 	}
 
 	response, err := openai.GenerateResponses(&openAIData)
