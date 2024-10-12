@@ -25,9 +25,9 @@ type AppUser struct {
 	ID                 uuid.UUID `json:"id"`
 	DeviceID           string    `json:"deviceID"`
 	Age                int       `json:"age,omitempty"`
-	Gender             string    `json:"gender,omitempty" binding:"oneof=male female other"`
+	Gender             string    `json:"gender,omitempty"`
 	Bio                string    `json:"bio,omitempty"`
 	PublicID           string    `json:"publicID"`
 	IsPremium          bool      `json:"isPremium"`
-	CommunicationStyle string    `json:"communicationStyle" binding:"oneof=default direct passive"`
+	CommunicationStyle string    `json:"communicationStyle"`
 }

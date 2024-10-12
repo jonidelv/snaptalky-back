@@ -9,29 +9,56 @@ import (
 )
 
 type User struct {
-	ID                 uuid.UUID `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
-	DeviceID           string    `json:"deviceID" gorm:"uniqueIndex"`
-	Platform           string    `json:"platform,omitempty"`
-	Age                int       `json:"age,omitempty"`
-	Gender             string    `json:"gender,omitempty" binding:"oneof=male female other"`
-	Bio                string    `json:"bio,omitempty"`
-	PublicID           string    `json:"publicID" gorm:"uniqueIndex"`
-	IsPremium          bool      `json:"isPremium" gorm:"default:false"`
-	IsPremiumAt        time.Time `json:"IsPremiumAt,omitempty"`
-	LastScannedAt      time.Time `json:"lastScannedAt,omitempty"`
-	ScanCount          int       `json:"scanCount" gorm:"default:0"`
-	CommunicationStyle string    `json:"communicationStyle" gorm:"default:default" binding:"oneof=default direct passive"`
-	UpdatedAt          time.Time `json:"updatedAt" gorm:"autoUpdateTime"`
-	CreatedAt          time.Time `json:"createdAt" gorm:"autoCreateTime"`
-	DeletedAt          time.Time `json:"deletedAt" gorm:"autoDeleteTime"`
+	ID                 uuid.UUID  `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
+	DeviceID           string     `json:"deviceID" gorm:"uniqueIndex;not null"`
+	Platform           string     `json:"platform,omitempty" gorm:"not null"`
+	Age                int        `json:"age,omitempty"`
+	Gender             string     `json:"gender,omitempty"`
+	Bio                string     `json:"bio,omitempty"`
+	PublicID           string     `json:"publicID" gorm:"uniqueIndex;not null"`
+	IsPremium          bool       `json:"isPremium" gorm:"default:false"`
+	IsPremiumAt        time.Time  `json:"IsPremiumAt,omitempty"`
+	LastScannedAt      time.Time  `json:"lastScannedAt,omitempty"`
+	ScanCount          int        `json:"scanCount" gorm:"default:0"`
+	CommunicationStyle string     `json:"communicationStyle" gorm:"default:default"`
+	UpdatedAt          *time.Time `json:"updatedAt" gorm:"autoUpdateTime"`
+	CreatedAt          *time.Time `json:"createdAt" gorm:"autoCreateTime"`
+	DeletedAt          *time.Time `json:"deletedAt" gorm:"autoDeleteTime"`
 }
 
-func (u *User) BeforeCreate() error {
+func (u *User) validateGender() error {
+	if u.Gender != "" && !(u.Gender == "male" || u.Gender == "female" || u.Gender == "other") {
+		return errors.New("invalid gender value")
+	}
+	return nil
+}
+
+func (u *User) validateCommunicationStyle() error {
+	if !(u.CommunicationStyle == "default" || u.CommunicationStyle == "direct" || u.CommunicationStyle == "passive") {
+		return errors.New("invalid communication style value")
+	}
+	return nil
+}
+
+func (u *User) BeforeCreate(_ *gorm.DB) (err error) {
 	if u.DeviceID == "" {
 		return errors.New("deviceID is required")
 	}
-	// Generate a unique PublicID
 	u.PublicID = uuid.New().String()
+	if err := u.validateGender(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (u *User) BeforeUpdate(_ *gorm.DB) (err error) {
+	if err := u.validateGender(); err != nil {
+		return err
+	}
+	if err := u.validateCommunicationStyle(); err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -13,7 +13,7 @@ type Response struct {
 	ID        uuid.UUID `json:"id" gorm:"type:uuid;default:uuid_generate_v4();primaryKey"`
 	UserID    uuid.UUID `json:"userId"`
 	User      User      `json:"user" gorm:"foreignKey:UserID"`
-	Tone      string    `json:"tone" gorm:"not null" binding:"oneof=flirting friendly formal"`
+	Tone      string    `json:"tone" gorm:"not null"`
 	Message   string    `json:"message" gorm:"not null"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"autoUpdateTime"`
 	CreatedAt time.Time `json:"createdAt" gorm:"autoCreateTime"`

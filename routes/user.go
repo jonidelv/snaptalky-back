@@ -29,9 +29,9 @@ func GetUser(c *gin.Context) {
 
 type UpdateUserInput struct {
 	Age                *int    `json:"age,omitempty"`
-	Gender             *string `json:"gender,omitempty" binding:"oneof=male female other"`
+	Gender             *string `json:"gender,omitempty"`
 	Bio                *string `json:"bio,omitempty"`
-	CommunicationStyle *string `json:"communicationStyle,omitempty" binding:"oneof=default direct passive"`
+	CommunicationStyle *string `json:"communicationStyle,omitempty"`
 }
 
 func UpdateUser(c *gin.Context) {
