@@ -3,7 +3,6 @@ package openai
 import (
 	"fmt"
 	"github.com/go-resty/resty/v2"
-	"log"
 	"os"
 	"snaptalky/utils"
 )
@@ -21,7 +20,7 @@ type ApiResponse struct {
 	} `json:"usage"`
 }
 
-func CallOpenaiApi(contentPayload []Content) (string, error) {
+func CallOpenaiApi(contentPayload []Content) (string, int, error) {
 	reqBody := map[string]interface{}{
 		"model":      "chatgpt-4o-latest",
 		"max_tokens": 1000,
@@ -43,7 +42,7 @@ func CallOpenaiApi(contentPayload []Content) (string, error) {
 
 	if err != nil {
 		utils.LogError(err, "Error making API request")
-		return "", err
+		return "", 0, err
 	}
 
 	apiResponse := resp.Result().(*ApiResponse)
@@ -51,13 +50,13 @@ func CallOpenaiApi(contentPayload []Content) (string, error) {
 	if len(apiResponse.Choices) == 0 {
 		err := fmt.Errorf("no choices in response")
 		utils.LogError(err, "API response validation error")
-		return "", err
+		return "", 0, err
 	}
 
-	log.Printf("Prompt Tokens: %d, Completion Tokens: %d, Total Tokens: %d",
-		apiResponse.Usage.PromptTokens, apiResponse.Usage.CompletionTokens, apiResponse.Usage.TotalTokens)
+	//log.Printf("Prompt Tokens: %d, Completion Tokens: %d, Total Tokens: %d",
+	//	apiResponse.Usage.PromptTokens, apiResponse.Usage.CompletionTokens, apiResponse.Usage.TotalTokens)
 
-	fmt.Println(apiResponse.Choices[0].Message.Content)
+	totalTokens := apiResponse.Usage.TotalTokens
 
-	return apiResponse.Choices[0].Message.Content, nil
+	return apiResponse.Choices[0].Message.Content, totalTokens, nil
 }

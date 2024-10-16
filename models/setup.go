@@ -8,7 +8,7 @@ import (
 
 func AutoMigrateModels() {
 	// AutoMigrate the User model
-	if err := database.DB.AutoMigrate(&User{}); err != nil {
+	if err := database.DB.AutoMigrate(&User{}, &Response{}); err != nil {
 		utils.LogError(err, "Failed to migrate database")
 		return
 	}

@@ -30,4 +30,5 @@ type AppUser struct {
 	PublicID           string    `json:"publicID"`
 	IsPremium          bool      `json:"isPremium"`
 	CommunicationStyle string    `json:"communicationStyle"`
+	ScanCount          int       `json:"scanCount"`
 }

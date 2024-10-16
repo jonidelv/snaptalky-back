@@ -3,14 +3,13 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"snaptalky/database"
 	"snaptalky/models"
 	"snaptalky/utils"
 	"snaptalky/utils/types"
 )
 
 type responsePayload struct {
-	Message string `json:"text"`
+	Message string `json:"message"`
 	Tone    string `json:"tone" binding:"oneof=flirting friendly formal"`
 }
 
@@ -36,7 +35,7 @@ func SaveResponse(c *gin.Context) {
 	}
 
 	response := models.Response{UserID: user.ID, Message: responsePayload.Message, Tone: responsePayload.Tone}
-	if err := database.DB.Create(&response).Error; err != nil {
+	if err := response.Add(); err != nil {
 		utils.LogError(err, "Error saving response")
 		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",

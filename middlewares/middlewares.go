@@ -1,7 +1,6 @@
 package middlewares
 
 import (
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
@@ -24,8 +23,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
-
-		fmt.Println(tokenString)
 
 		getKey := func(token *jwt.Token) (interface{}, error) {
 			return []byte(os.Getenv("TOKEN_KEY")), nil
