@@ -11,14 +11,18 @@ type ApiResponse struct {
 	Data    interface{} `json:"data,omitempty"`
 }
 
-// DataToBuildResponses is the data necessary to build the responses
+// DataToBuildResponses is the data necessary to build the responses from openai
 type DataToBuildResponses struct {
-	Text        *string `json:"text"`
-	Image       *string `json:"image"`
-	Tone        string  `json:"tone" binding:"oneof=flirting friendly formal"`
-	Context     *string `json:"context"`
-	ContextText *string `json:"contextText"`
-	Location    *string `json:"location"`
+	Text              *string `json:"text"`
+	Image             *string `json:"image"`
+	Tone              string  `json:"tone" binding:"oneof=flirting friendly formal"`
+	ResponseType      *string `json:"responseType"`
+	AdditionalContext *string `json:"additionalContext"`
+	Location          *string `json:"location"`
+	UserBio           *string `json:"userBio"`
+	UserGender        *string `json:"userGender"`
+	UserAge           *int    `json:"userAge"`
+	PreviousResponses *string `json:"previousResponses"`
 }
 
 type AppUser struct {

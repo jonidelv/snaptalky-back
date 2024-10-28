@@ -3,10 +3,20 @@ package routes
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"snaptalky/models"
 	"snaptalky/utils"
 	"snaptalky/utils/openai"
 	"snaptalky/utils/types"
 )
+
+type scanRequest struct {
+	Text              *string `json:"text"`
+	Image             *string `json:"image"`
+	Tone              string  `json:"tone" binding:"oneof=flirting friendly formal"`
+	ResponseType      *string `json:"responseType"`
+	AdditionalContext *string `json:"additionalContext"`
+	Location          *string `json:"location"`
+}
 
 func ProcessResponse(c *gin.Context) {
 	user, err := getUserFromContext(c)
@@ -25,14 +35,59 @@ func ProcessResponse(c *gin.Context) {
 		})
 	}
 
-	var openAIData types.DataToBuildResponses
+	var requestData scanRequest
 
-	if err := c.ShouldBindJSON(&openAIData); err != nil {
+	if err := c.ShouldBindJSON(&requestData); err != nil {
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
 		})
 		return
+	}
+
+	// We need either text or image
+	if (requestData.Text == nil || *requestData.Text == "") && (requestData.Image == nil || *requestData.Image == "") {
+		c.JSON(http.StatusBadRequest, types.ApiResponse{
+			Status:  "error",
+			Message: "text or image is required",
+		})
+		return
+	}
+
+	if requestData.AdditionalContext != nil && len(*requestData.AdditionalContext) > 400 {
+		c.JSON(http.StatusBadRequest, types.ApiResponse{
+			Status:  "error",
+			Message: "context is too large",
+		})
+		return
+	}
+
+	// We need either text or image
+	if requestData.Tone == "" {
+		c.JSON(http.StatusBadRequest, types.ApiResponse{
+			Status:  "error",
+			Message: "tone is needed it",
+		})
+		return
+	}
+
+	var previousResponses string
+	previousResponses, prevRespErr := models.GetMessagesByTone(user.ID, requestData.Tone)
+	if prevRespErr != nil {
+		previousResponses = ""
+	}
+
+	openAIData := types.DataToBuildResponses{
+		Text:              requestData.Text,
+		Image:             requestData.Image,
+		Tone:              requestData.Tone,
+		AdditionalContext: requestData.AdditionalContext,
+		Location:          requestData.Location,
+		ResponseType:      requestData.ResponseType,
+		UserBio:           &user.Bio,
+		UserGender:        &user.Gender,
+		UserAge:           &user.Age,
+		PreviousResponses: &previousResponses,
 	}
 
 	//var usages int

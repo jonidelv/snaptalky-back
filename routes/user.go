@@ -54,6 +54,14 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
+	if input.Bio != nil && len(*input.Bio) > 350 {
+		c.JSON(http.StatusBadRequest, types.ApiResponse{
+			Status:  "error",
+			Message: "bio cannot bio too large",
+		})
+		return
+	}
+
 	// Apply updates to the user object
 	if input.Age != nil {
 		user.Age = *input.Age
