@@ -2,9 +2,9 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jonidelv/snaptalky-back/database"
+	"github.com/jonidelv/snaptalky-back/utils/types"
 	"net/http"
-	"snaptalky/database"
-	"snaptalky/utils/types"
 )
 
 func GetUser(c *gin.Context) {

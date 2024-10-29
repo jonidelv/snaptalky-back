@@ -3,11 +3,11 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+	"github.com/jonidelv/snaptalky-back/database"
+	"github.com/jonidelv/snaptalky-back/models"
+	"github.com/jonidelv/snaptalky-back/routes"
 	"log"
 	"os"
-	"snaptalky/database"
-	"snaptalky/models"
-	"snaptalky/routes"
 )
 
 func main() {

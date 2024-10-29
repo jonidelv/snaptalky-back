@@ -3,9 +3,9 @@ package routes
 import (
 	"errors"
 	"github.com/gin-gonic/gin"
-	"snaptalky/middlewares"
-	"snaptalky/models"
-	"snaptalky/utils/types"
+	"github.com/jonidelv/snaptalky-back/middlewares"
+	"github.com/jonidelv/snaptalky-back/models"
+	"github.com/jonidelv/snaptalky-back/utils/types"
 )
 
 func SetupRoutes(router *gin.Engine) {

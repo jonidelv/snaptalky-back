@@ -2,7 +2,7 @@ package openai
 
 import (
 	"fmt"
-	"snaptalky/utils/types"
+	"github.com/jonidelv/snaptalky-back/utils/types"
 	"strings"
 )
 

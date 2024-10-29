@@ -3,12 +3,12 @@ package database
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/jonidelv/snaptalky-back/utils"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 	"log"
 	"os"
-	"snaptalky/utils"
 	"time"
 )
 
@@ -48,8 +48,7 @@ func ConnectDatabase() {
 		}
 
 		if len(missingVars) > 0 {
-			utils.LogError(fmt.Errorf("missing environment variables: %v", missingVars), "Failed to construct DSN")
-			return
+			utils.LogError(fmt.Errorf("missing environment variables: %v", missingVars), "DSN may failed due to missing variable")
 		}
 
 		// Create the DSN (Data Source Name)

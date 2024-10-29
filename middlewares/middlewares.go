@@ -4,11 +4,11 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/google/uuid"
+	"github.com/jonidelv/snaptalky-back/database"
+	"github.com/jonidelv/snaptalky-back/models"
+	"github.com/jonidelv/snaptalky-back/utils/types"
 	"net/http"
 	"os"
-	"snaptalky/database"
-	"snaptalky/models"
-	"snaptalky/utils/types"
 	"time"
 )
 

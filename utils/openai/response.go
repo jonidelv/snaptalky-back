@@ -2,8 +2,8 @@ package openai
 
 import (
 	"encoding/json"
-	"snaptalky/utils"
-	"snaptalky/utils/types"
+	"github.com/jonidelv/snaptalky-back/utils"
+	"github.com/jonidelv/snaptalky-back/utils/types"
 )
 
 type Response struct {

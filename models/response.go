@@ -4,8 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"github.com/google/uuid"
+	"github.com/jonidelv/snaptalky-back/database"
 	"gorm.io/gorm"
-	"snaptalky/database"
 	"strings"
 	"time"
 )

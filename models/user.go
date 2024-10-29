@@ -3,8 +3,8 @@ package models
 import (
 	"errors"
 	"github.com/google/uuid"
+	"github.com/jonidelv/snaptalky-back/database"
 	"gorm.io/gorm"
-	"snaptalky/database"
 	"time"
 )
 
