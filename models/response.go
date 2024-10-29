@@ -21,7 +21,7 @@ type Response struct {
 	DeletedAt *time.Time `json:"deletedAt" gorm:"autoDeleteTime"`
 }
 
-func (r *Response) BeforeCreate() error {
+func (r *Response) BeforeCreate(_ *gorm.DB) error {
 	validTones := map[string]bool{"flirting": true, "friendly": true, "formal": true}
 	if r.Message == "" {
 		return errors.New("message is required")
