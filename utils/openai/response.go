@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/jonidelv/snaptalky-back/utils"
 	"github.com/jonidelv/snaptalky-back/utils/types"
+	"time"
 )
 
 type Response struct {
@@ -13,10 +14,26 @@ type Response struct {
 
 func GenerateResponses(dataToBuildResponse *types.DataToBuildResponses) (Response, int, error) {
 	contentPayload := MakeOpenaiContentPayload(dataToBuildResponse)
+
+	var openaiResponse string
 	var usages int
-	openaiResponse, usages, err := CallOpenaiApi(contentPayload)
+	var err error
+
+	// Retry logic for CallOpenaiApi
+	for i := 0; i < 2; i++ {
+		openaiResponse, usages, err = CallOpenaiApi(contentPayload)
+		if err == nil {
+			break
+		}
+
+		// Log the error and wait 300 ms before retrying
+		utils.LogError(err, "Error calling OpenAI API, retrying...")
+		time.Sleep(300 * time.Millisecond)
+	}
+
+	// If still failing after retries, return the error
 	if err != nil {
-		utils.LogError(err, "Error calling OpenAI API")
+		utils.LogError(err, "Error calling OpenAI API after retries")
 		return Response{}, 0, err
 	}
 

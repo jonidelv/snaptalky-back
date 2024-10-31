@@ -88,8 +88,14 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 	}
 
 	if hasString(data.Location) {
-		promptBuilder.WriteString("- Location: '" + *data.Location + "'. Use this location to build the answers in a way someone from this location would respond, use the slang's and idioms from the location provided.\n")
-		promptBuilder.WriteString("Use the location only if it has the same language to message to respond to (text or image) provided above.\n\n")
+		promptBuilder.WriteString("- Location: '" + *data.Location + "'. Use this location to build the answers in a way someone from this location would respond, using the slang's and idioms from the location provided.\n")
+		if hasMessageText && !hasMessageImage {
+			promptBuilder.WriteString("IMPORTANT: Use the location ONLY!! if it has the same language (idiom) to the message to respond to provided above. We don't want the text being in one language and the responses created in a different language.\n\n")
+		}
+		if !hasMessageText && hasMessageImage {
+			promptBuilder.WriteString("IMPORTANT: Use the location ONLY!! if it has the same language (idiom) to the image in base64 provided below. We don't want the image being in one language and the responses created in a different language.\n\n")
+
+		}
 	}
 
 	var userInfoParts []string
