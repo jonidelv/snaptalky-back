@@ -88,13 +88,12 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 	}
 
 	if hasString(data.Location) {
-		promptBuilder.WriteString("- Location: '" + *data.Location + "'. Use this location to build the answers in a way someone from this location would respond, using the slang's and idioms from the location provided.\n")
+		promptBuilder.WriteString("- Location: '" + *data.Location + "'. Use this location to adjust the style of the responses, incorporating local slang and idioms, but ensure that the responses remain in the same language as the message to respond to.\n")
 		if hasMessageText && !hasMessageImage {
-			promptBuilder.WriteString("IMPORTANT: Use the location ONLY!! if it has the same language (idiom) to the message to respond to provided above. We don't want the text being in one language and the responses created in a different language.\n\n")
+			promptBuilder.WriteString("- IMPORTANT: Regardless of the location or any other context, ensure that all responses are in the same language as the message text to respond to. Do not translate or change the language of the responses based on the location.\n\n")
 		}
 		if !hasMessageText && hasMessageImage {
-			promptBuilder.WriteString("IMPORTANT: Use the location ONLY!! if it has the same language (idiom) to the image in base64 provided below. We don't want the image being in one language and the responses created in a different language.\n\n")
-
+			promptBuilder.WriteString("- IMPORTANT: Regardless of the location or any other context, ensure that all responses are in the same language as image in base 64 provided. Do not translate or change the language of the responses based on the location.\n\n")
 		}
 	}
 
@@ -120,7 +119,7 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 
 	// Instructions
 	promptBuilder.WriteString("- Your task is to generate 8 possible short responses that match the conversation context and the type of response specified, using the user's preferences if available.\n\n")
-	promptBuilder.WriteString("- Make sure the responses are in the same language as the message to respond to.\n\n")
+	promptBuilder.WriteString("- Make sure the responses are in the same language as the message to respond to (image or text).\n\n")
 	promptBuilder.WriteString("- If the message to respond to is not suitable for generating responses (e.g., it's not a message from a chat), or if the content cannot be determined, respond with {\"respondedOk\":false}.\n\n")
 	promptBuilder.WriteString("- Respond in the following format only (so I can transform this string response into JSON with JSON.parse): {\"respondedOk\":true,\"responses\":[\"response 1\",\"response 2\",\"response 3\",\"response 4\",\"response 5\",\"response 6\",\"response 7\",\"response 8\"]}\n\n")
 	promptBuilder.WriteString("- Do not include any other text in your response.\n\n")
