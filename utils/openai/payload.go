@@ -111,7 +111,8 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 	}
 	if len(userInfoParts) > 0 {
 		promptBuilder.WriteString("- User information: " + strings.Join(userInfoParts, ", ") + ".\n")
-		promptBuilder.WriteString("This is the information and bio of the user that is requesting help with the messages. Use this to have additional information when crafting the responses.\n\n")
+		promptBuilder.WriteString("This is the information and bio of the user that is requesting help with the messages. Use this to have additional information when crafting the responses.\n")
+		promptBuilder.WriteString("This information DOES NOT INTENT to modify the language of the replies, use this just as context.\n\n")
 	}
 
 	if hasString(data.PreviousResponses) && !hasString(data.ResponseType) {
