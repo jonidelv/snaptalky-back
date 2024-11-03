@@ -78,13 +78,13 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 
 	if hasMessageImage && !hasMessageText {
 		promptBuilder.WriteString("- The message to respond to is an image provided in base64 format. If the content of the image cannot be determined, respond with {\"respondedOk\":false}.\n")
-		promptBuilder.WriteString("- Make sure the replies are in the same language as the content of the image provided.\n\n")
-		languageSource = "content of the image provided in base 64"
+		promptBuilder.WriteString("- Make sure the replies are in the same language as the content of the image provided in base64.\n\n")
+		languageSource = "content of the image provided in base64"
 	}
 
 	if hasMessageText && hasMessageImage {
-		promptBuilder.WriteString("- The message to respond to includes both text and an image. Use both as context, but ensure that the replies are in the same language as the text message provided.\n\n")
-		languageSource = "content of the image provided in base 64"
+		promptBuilder.WriteString("- The message to respond to includes both text and an image. Use both as context, but ensure that the replies are in the same language as the image provided.\n\n")
+		languageSource = "content of the image provided in base64"
 	}
 
 	promptBuilder.WriteString("- The conversation is in a '" + data.Tone + "' context. Possible contexts are friendly, formal, or flirting. Adjust the tone of the responses accordingly.\n\n")
@@ -116,18 +116,15 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 
 	if hasString(data.PreviousResponses) && !hasString(data.ResponseType) {
 		promptBuilder.WriteString("- Previous responses chosen by the user in this context: " + *data.PreviousResponses + ".\n")
-		promptBuilder.WriteString("Use these previous responses as a way to see how the user would like the replies to be (same format), but ensure that the language of all replies matches the language of the " + languageSource + ".\n")
-		promptBuilder.WriteString("If the idiom or language fo the: " + languageSource + " does not match the language of these Previous responses, DISCARD the Previous responses, since WE DONT WANT to modify the idiom or language of the replies.\n\n")
+		promptBuilder.WriteString("IMPORTANT: Compare the language of these previous responses with the language of the " + languageSource + ".\n")
+		promptBuilder.WriteString("If the languages match, use the previous responses to understand the user's preferred style and format.\n")
+		promptBuilder.WriteString("If the languages do not match, ignore the previous responses, as we do not want to change the language or idiom of the replies.\n\n")
 	}
 
-	// Instructions
 	promptBuilder.WriteString("- Your task is to generate 8 possible short responses that match the conversation context and the type of response specified, using the user's preferences if available.\n\n")
 	promptBuilder.WriteString("- If the message to respond to is not suitable for generating responses (e.g., it's not a message from a chat), or if the content cannot be determined, respond with {\"respondedOk\":false}.\n\n")
 	promptBuilder.WriteString("- Respond in the following format only (so I can transform this string response into JSON with JSON.parse): {\"respondedOk\":true,\"responses\":[\"response 1\",\"response 2\",\"response 3\",\"response 4\",\"response 5\",\"response 6\",\"response 7\",\"response 8\"]}\n\n")
 	promptBuilder.WriteString("- Do not include any other text in your response.\n\n")
-
-	// Add explicit instruction about language consistency
-	promptBuilder.WriteString("- IMPORTANT: Regardless of previous responses, user preferences, or any other context, ensure that all replies are in the same language as the: " + languageSource + ". Do not change the language of the responses based on previous messages or user preferences.\n\n")
 
 	var toneTemplate string
 	switch strings.ToLower(data.Tone) {
@@ -160,6 +157,13 @@ Snapchat. Respond in a friendly way.`
 		promptBuilder.WriteString("All 8 responses need to be in this style. Respond only in this way.\n")
 		promptBuilder.WriteString("The response style is: '" + *data.ResponseType + "'. The 8 responses need to be in this specific way.\n")
 	}
+
+	if hasMessageImage {
+		promptBuilder.WriteString("- IMPORTANT: Regardless of previous responses, user preferences, or any other context, ensure that all replies are responded the same language as the image provided below.\n\n")
+	} else {
+		promptBuilder.WriteString("- IMPORTANT: Regardless of previous responses, user preferences, or any other context, ensure that all replies are responded the same language as: '" + *data.Text + "'.\n\n")
+	}
+
 	prompt := promptBuilder.String()
 
 	content := []Content{
