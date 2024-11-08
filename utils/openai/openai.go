@@ -30,6 +30,9 @@ func CallOpenaiApi(contentPayload []Content) (string, int, error) {
 				"content": contentPayload,
 			},
 		},
+		"response_format": map[string]interface{}{
+			"type": "json_object",
+		},
 	}
 
 	client := resty.New()
