@@ -74,7 +74,7 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 		promptBuilder.WriteString("A) Extract the text from the image provided in base64 format below and identify its language.\n\n")
 	}
 
-	promptBuilder.WriteString("B) Using the identified language, generate 8 possible replies to this message in a chat, considering the following guidelines:\n\n")
+	promptBuilder.WriteString("B) Using the identified language, generate 10 possible replies to this message in a chat, considering the following guidelines:\n\n")
 	// Define the language source variable
 	var languageSource string
 
@@ -131,9 +131,9 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 		promptBuilder.WriteString("If the languages do not match, ignore the previous responses, as we do not want to change the language or idiom of the replies.\n\n")
 	}
 
-	promptBuilder.WriteString("- Your task is to generate 8 possible short responses that match the conversation context and the type of response specified, using the user's preferences if available.\n\n")
+	promptBuilder.WriteString("- Your task is to generate 10 possible short responses that match the conversation context and the type of response specified, using the user's preferences if available.\n\n")
 	promptBuilder.WriteString("- If the message to respond to (user input: image or text) is not suitable for generating responses (e.g., it's not a message from a chat), or if the content cannot be determined, respond with {\"respondedOk\":false}.\n\n")
-	promptBuilder.WriteString("- Respond in the following format only (so I can transform this string response into JSON with JSON.parse): {\"respondedOk\":true,\"responses\":[\"response 1\",\"response 2\",\"response 3\",\"response 4\",\"response 5\",\"response 6\",\"response 7\",\"response 8\"]}\n\n")
+	promptBuilder.WriteString("- Respond in the following format only (so I can transform this string response into JSON with JSON.parse): {\"respondedOk\":true,\"responses\":[\"response 1\",\"response 2\",\"response 3\",\"response 4\",\"response 5\",\"response 6\",\"response 7\",\"response 8\", \"response 9\", \"response 10\"]}\n\n")
 	promptBuilder.WriteString("- Do not include any other text in your response.\n\n")
 
 	var toneTemplate string
@@ -164,8 +164,8 @@ Snapchat. Respond in a friendly way.`
 
 	if hasString(data.ResponseType) {
 		promptBuilder.WriteString("- IMPORTANT: The user wants the responses to be in THIS specific style: '" + *data.ResponseType + "'.\n")
-		promptBuilder.WriteString("All 8 responses need to be in this style. Respond only in this way.\n")
-		promptBuilder.WriteString("The response style is: '" + *data.ResponseType + "'. The 8 responses need to be in this specific way.\n")
+		promptBuilder.WriteString("All 10 responses need to be in this style. Respond only in this way.\n")
+		promptBuilder.WriteString("The response style is: '" + *data.ResponseType + "'. The 10 responses need to be in this specific way.\n")
 	}
 
 	if hasMessageImage {
