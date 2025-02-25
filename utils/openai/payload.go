@@ -124,12 +124,13 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 		promptBuilder.WriteString("This information DOES NOT INTENT to modify the language of the replies, use this just as context.\n\n")
 	}
 
-	if hasString(data.PreviousResponses) && !hasString(data.ResponseType) {
-		promptBuilder.WriteString("- Previous responses chosen by the user in this context: " + *data.PreviousResponses + ".\n")
-		promptBuilder.WriteString("IMPORTANT: Compare the language of these previous responses with the language of the " + languageSource + " extracted in point A).\n")
-		promptBuilder.WriteString("If the languages match, use the previous responses to understand the user's preferred style and format.\n")
-		promptBuilder.WriteString("If the languages do not match, ignore the previous responses, as we do not want to change the language or idiom of the replies.\n\n")
-	}
+	// TODO check this
+	//if hasString(data.PreviousResponses) && !hasString(data.ResponseType) {
+	//	promptBuilder.WriteString("- Previous responses chosen by the user in this context: " + *data.PreviousResponses + ".\n")
+	//	promptBuilder.WriteString("IMPORTANT: Compare the language of these previous responses with the language of the " + languageSource + " extracted in point A).\n")
+	//	promptBuilder.WriteString("If the languages match, use the previous responses to understand the user's preferred style and format.\n")
+	//	promptBuilder.WriteString("If the languages do not match, ignore the previous responses, as we do not want to change the language or idiom of the replies.\n\n")
+	//}
 
 	promptBuilder.WriteString("- Your task is to generate 10 possible short responses that match the conversation context and the type of response specified, using the user's preferences if available.\n\n")
 	promptBuilder.WriteString("- If the message to respond to (user input: image or text) is not suitable for generating responses (e.g., it's not a message from a chat), or if the content cannot be determined, respond with {\"respondedOk\":false}.\n\n")
