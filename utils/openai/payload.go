@@ -104,7 +104,7 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 	}
 
 	if hasString(data.Location) {
-		promptBuilder.WriteString("- Location: '" + *data.Location + "'. Use this location to adjust the style of the responses, incorporating local slang and idioms, but ensure that the responses remain in the same language as the: " + languageSource + ".\n")
+		promptBuilder.WriteString("- Location: '" + *data.Location + "'. Use this location to adjust the style of the responses, incorporating local slang, but ensure that the responses remain in the same language as the: " + languageSource + ".\n")
 		promptBuilder.WriteString("- IMPORTANT: Regardless of the location or any other context, ensure that all responses are in the same language as the " + languageSource + " using the language extracted in point A). Do not translate or change the language of the replies based on the location.\n\n")
 	}
 
