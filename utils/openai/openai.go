@@ -22,8 +22,8 @@ type ApiResponse struct {
 
 func CallOpenaiApi(contentPayload []Content) (string, int, error) {
 	reqBody := map[string]interface{}{
-		"model":      "chatgpt-4o-latest",
-		"max_tokens": 3500,
+		"model":      "o3-mini",
+		"max_tokens": 4000,
 		"messages": []map[string]interface{}{
 			{
 				"role":    "user",
