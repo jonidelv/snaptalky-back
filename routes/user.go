@@ -32,6 +32,7 @@ type UpdateUserInput struct {
 	Gender             *string `json:"gender,omitempty"`
 	Bio                *string `json:"bio,omitempty"`
 	CommunicationStyle *string `json:"communicationStyle,omitempty"`
+	Lang               *string `json:"lang,omitempty"`
 }
 
 func UpdateUser(c *gin.Context) {
@@ -71,6 +72,9 @@ func UpdateUser(c *gin.Context) {
 	}
 	if input.Bio != nil {
 		user.Bio = *input.Bio
+	}
+	if input.Lang != nil {
+		user.Lang = *input.Lang
 	}
 	if input.CommunicationStyle != nil {
 		user.CommunicationStyle = *input.CommunicationStyle

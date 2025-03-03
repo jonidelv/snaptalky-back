@@ -35,4 +35,5 @@ type AppUser struct {
 	IsPremium          bool      `json:"isPremium"`
 	CommunicationStyle string    `json:"communicationStyle"`
 	ScanCount          int       `json:"scanCount"`
+	Lang               string    `json:"lang"`
 }

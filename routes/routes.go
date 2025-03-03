@@ -47,6 +47,7 @@ func getAppUser(user models.User) types.AppUser {
 		IsPremium:          user.IsPremium,
 		CommunicationStyle: user.CommunicationStyle,
 		ScanCount:          user.ScanCount,
+		Lang:               user.Lang,
 	}
 
 	return appUser

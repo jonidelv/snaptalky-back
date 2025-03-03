@@ -3,6 +3,7 @@ package models
 import (
 	"errors"
 	"github.com/google/uuid"
+	"github.com/jonidelv/snaptalky-back/constants"
 	"github.com/jonidelv/snaptalky-back/database"
 	"gorm.io/gorm"
 	"time"
@@ -16,12 +17,13 @@ type User struct {
 	Gender             string     `json:"gender,omitempty"`
 	Bio                string     `json:"bio,omitempty"`
 	PublicID           string     `json:"publicID" gorm:"uniqueIndex;not null"`
-	IsPremium          bool       `json:"isPremium" gorm:"default:true"` // TODO change this to false
+	IsPremium          bool       `json:"isPremium" gorm:"default:false"`
 	IsPremiumAt        time.Time  `json:"IsPremiumAt,omitempty"`
 	LastScannedAt      time.Time  `json:"lastScannedAt,omitempty"`
 	ScanCount          int        `json:"scanCount" gorm:"default:0"`
 	UsagesCount        int        `json:"usagesCount" gorm:"default:0"`
 	CommunicationStyle string     `json:"communicationStyle" gorm:"default:default"`
+	Lang               string     `json:"lang" gorm:"default:English"`
 	UpdatedAt          *time.Time `json:"updatedAt" gorm:"autoUpdateTime"`
 	CreatedAt          *time.Time `json:"createdAt" gorm:"autoCreateTime"`
 	DeletedAt          *time.Time `json:"deletedAt" gorm:"autoDeleteTime"`
@@ -41,6 +43,15 @@ func (u *User) validateCommunicationStyle() error {
 	return nil
 }
 
+func (u *User) validateLang() error {
+	for _, validLang := range constants.Languages {
+		if u.Lang == validLang {
+			return nil
+		}
+	}
+	return errors.New("invalid language value")
+}
+
 func (u *User) BeforeCreate(_ *gorm.DB) (err error) {
 	if u.DeviceID == "" {
 		return errors.New("deviceID is required")
@@ -58,6 +69,9 @@ func (u *User) BeforeUpdate(_ *gorm.DB) (err error) {
 		return err
 	}
 	if err := u.validateCommunicationStyle(); err != nil {
+		return err
+	}
+	if err := u.validateLang(); err != nil {
 		return err
 	}
 
