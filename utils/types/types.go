@@ -16,6 +16,7 @@ type DataToBuildResponses struct {
 	Text              *string `json:"text"`
 	Image             *string `json:"image"`
 	Tone              string  `json:"tone" binding:"oneof=flirting friendly formal"`
+	Language          string  `json:"language"`
 	ResponseType      *string `json:"responseType"`
 	AdditionalContext *string `json:"additionalContext"`
 	Location          *string `json:"location"`
