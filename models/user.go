@@ -17,7 +17,7 @@ type User struct {
 	Gender             string     `json:"gender,omitempty"`
 	Bio                string     `json:"bio,omitempty"`
 	PublicID           string     `json:"publicID" gorm:"uniqueIndex;not null"`
-	IsPremium          bool       `json:"isPremium" gorm:"default:false"`
+	IsPremium          bool       `json:"isPremium" gorm:"default:true"`
 	IsPremiumAt        time.Time  `json:"IsPremiumAt,omitempty"`
 	LastScannedAt      time.Time  `json:"lastScannedAt,omitempty"`
 	ScanCount          int        `json:"scanCount" gorm:"default:0"`
