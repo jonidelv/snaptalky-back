@@ -75,11 +75,12 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 	if hasMessageText && !hasMessageImage {
 		promptBuilder.WriteString("- The message to reply to is: '" + *data.Text + "'.\n")
 		promptBuilder.WriteString("- Make sure the replies are in the same language as the language in point A).\n")
-		promptBuilder.WriteString("Use this information only if it makes sense in the context of a message, if not respond with {\"respondedOk\":false}.\n\n")
+		//promptBuilder.WriteString(" If the content of the text cannot be determined or interpreted, respond with {\"respondedOk\":false}.\n\n")
 	}
 
 	if hasMessageImage && !hasMessageText {
-		promptBuilder.WriteString("- The message to reply to is an image provided in base64 format. If the content of the image cannot be determined, respond with {\"respondedOk\":false}.\n")
+		//promptBuilder.WriteString("- The message to reply to is an image provided in base64 format. If the content of the image cannot be determined, respond with {\"respondedOk\":false}.\n")
+		promptBuilder.WriteString("- The message to reply to is an image provided in base64 format.\n")
 		promptBuilder.WriteString("- Make sure the replies are in the same language as the language in point A).\n\n")
 	}
 
@@ -123,7 +124,7 @@ func MakeOpenaiContentPayload(data *types.DataToBuildResponses) []Content {
 	}
 
 	promptBuilder.WriteString("- Your task is to generate 10 possible short responses that match the conversation context and the type of response specified, using the user's preferences if available.\n\n")
-	promptBuilder.WriteString("- If the message to respond to (user input: image or text) is not suitable for generating responses (e.g., it's not a message from a chat), or if the content cannot be determined, respond with {\"respondedOk\":false}.\n\n")
+	//promptBuilder.WriteString("- If you can not generate 10 responses from this prompt respond with {\"respondedOk\":false}.\n\n")
 	promptBuilder.WriteString("- Respond in the following format only (so I can transform this string response into JSON with JSON.parse): {\"respondedOk\":true,\"responses\":[\"response 1\",\"response 2\",\"response 3\",\"response 4\",\"response 5\",\"response 6\",\"response 7\",\"response 8\", \"response 9\", \"response 10\"]}\n\n")
 	promptBuilder.WriteString("- Do not include any other text in your response.\n\n")
 
