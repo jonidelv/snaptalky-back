@@ -10,6 +10,7 @@ import (
 	"github.com/jonidelv/snaptalky-back/database"
 	"github.com/jonidelv/snaptalky-back/models"
 	"github.com/jonidelv/snaptalky-back/routes"
+	"github.com/jonidelv/snaptalky-back/utils"
 )
 
 func main() {
@@ -42,6 +43,8 @@ func main() {
 	database.ConnectDatabase()
 
 	models.AutoMigrateModels()
+
+	utils.InitRollbar()
 
 	r := gin.Default()
 	r.RemoveExtraSlash = true
