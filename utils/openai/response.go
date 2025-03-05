@@ -26,9 +26,7 @@ func GenerateResponses(dataToBuildResponse *types.DataToBuildResponses) (Respons
 			break
 		}
 
-		// Log the error and wait 300 ms before retrying
-		utils.LogError(err, "Error calling OpenAI API, retrying...")
-		time.Sleep(300 * time.Millisecond)
+		time.Sleep(400 * time.Millisecond)
 	}
 
 	// If still failing after retries, return the error
