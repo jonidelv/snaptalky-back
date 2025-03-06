@@ -7,6 +7,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
+
 	"github.com/jonidelv/snaptalky-back/database"
 	"github.com/jonidelv/snaptalky-back/models"
 	"github.com/jonidelv/snaptalky-back/routes"
@@ -46,8 +47,7 @@ func main() {
 
 	utils.InitRollbar()
 
-	r := gin.Default()
-	r.RemoveExtraSlash = true
+	r := utils.InitGin(isProduction)
 
 	routes.SetupRoutes(r)
 

@@ -64,7 +64,8 @@ func ConnectDatabase() {
 
 	// Determine the logger configuration based on the environment
 	var config *gorm.Config
-	if ginMode := os.Getenv("GIN_MODE"); ginMode == gin.DebugMode {
+	ginMode := os.Getenv("GIN_MODE")
+	if ginMode == gin.DebugMode {
 		config = &gorm.Config{
 			Logger: logger.New(
 				log.New(os.Stdout, "\r\n", log.LstdFlags),
@@ -77,7 +78,18 @@ func ConnectDatabase() {
 			),
 		}
 	} else {
-		config = &gorm.Config{}
+		// In production, only log errors and disable SQL query logging
+		config = &gorm.Config{
+			Logger: logger.New(
+				log.New(os.Stdout, "\r\n", log.LstdFlags),
+				logger.Config{
+					SlowThreshold:             time.Second,
+					LogLevel:                  logger.Error,
+					IgnoreRecordNotFoundError: true,
+					Colorful:                  false,
+				},
+			),
+		}
 	}
 
 	// Connect to the database
