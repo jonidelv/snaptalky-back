@@ -1,10 +1,10 @@
 package openai
 
 import (
-	"fmt"
-	"github.com/go-resty/resty/v2"
-	"github.com/jonidelv/snaptalky-back/utils"
+	"errors"
 	"os"
+
+	"github.com/go-resty/resty/v2"
 )
 
 type ApiResponse struct {
@@ -44,15 +44,13 @@ func CallOpenaiApi(contentPayload []Content) (string, int, error) {
 		Post("https://api.openai.com/v1/chat/completions")
 
 	if err != nil {
-		utils.LogError(err, "Error making API request")
 		return "", 0, err
 	}
 
 	apiResponse := resp.Result().(*ApiResponse)
 
 	if len(apiResponse.Choices) == 0 {
-		err := fmt.Errorf("no choices in response")
-		utils.LogError(err, "no choices in response")
+		err := errors.New("no choices in response")
 		return "", 0, err
 	}
 

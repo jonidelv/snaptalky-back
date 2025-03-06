@@ -2,9 +2,9 @@ package openai
 
 import (
 	"encoding/json"
-	"github.com/jonidelv/snaptalky-back/utils"
-	"github.com/jonidelv/snaptalky-back/utils/types"
 	"time"
+
+	"github.com/jonidelv/snaptalky-back/utils/types"
 )
 
 type Response struct {
@@ -31,14 +31,12 @@ func GenerateResponses(dataToBuildResponse *types.DataToBuildResponses) (Respons
 
 	// If still failing after retries, return the error
 	if err != nil {
-		utils.LogError(err, "Error calling OpenAI API after retries")
 		return Response{}, 0, err
 	}
 
 	var apiResponse Response
 	err = json.Unmarshal([]byte(openaiResponse), &apiResponse)
 	if err != nil {
-		utils.LogError(err, "Error parsing JSON response")
 		return Response{}, 0, err
 	}
 

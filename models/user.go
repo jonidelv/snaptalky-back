@@ -2,11 +2,13 @@ package models
 
 import (
 	"errors"
-	"github.com/google/uuid"
-	"github.com/jonidelv/snaptalky-back/constants"
-	"github.com/jonidelv/snaptalky-back/database"
 	"gorm.io/gorm"
 	"time"
+
+	"github.com/google/uuid"
+
+	"github.com/jonidelv/snaptalky-back/constants"
+	"github.com/jonidelv/snaptalky-back/database"
 )
 
 type User struct {

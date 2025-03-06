@@ -1,12 +1,16 @@
 package routes
 
 import (
+	"errors"
+	"fmt"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
+
 	"github.com/jonidelv/snaptalky-back/models"
 	"github.com/jonidelv/snaptalky-back/utils"
 	"github.com/jonidelv/snaptalky-back/utils/openai"
 	"github.com/jonidelv/snaptalky-back/utils/types"
-	"net/http"
 )
 
 type scanRequest struct {
@@ -22,6 +26,7 @@ type scanRequest struct {
 func ProcessResponse(c *gin.Context) {
 	user, err := getUserFromContext(c)
 	if err != nil {
+		utils.LogError(err, "failed to get user from context", utils.Object{"path": "routes/scan.go"})
 		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
@@ -39,6 +44,7 @@ func ProcessResponse(c *gin.Context) {
 	var requestData scanRequest
 
 	if err := c.ShouldBindJSON(&requestData); err != nil {
+		utils.LogError(err, "failed to bind JSON payload", utils.Object{"path": "routes/scan.go", "user": user.ID})
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
@@ -48,6 +54,7 @@ func ProcessResponse(c *gin.Context) {
 
 	// We need either text or image
 	if (requestData.Text == nil || *requestData.Text == "") && (requestData.Image == nil || *requestData.Image == "") {
+		utils.LogError(errors.New("text or image is required"), "invalid request not image or text given", utils.Object{"path": "routes/scan.go"})
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: "text or image is required",
@@ -56,6 +63,7 @@ func ProcessResponse(c *gin.Context) {
 	}
 
 	if requestData.AdditionalContext != nil && len(*requestData.AdditionalContext) > 400 {
+		utils.LogError(errors.New("additionalContext cannot be too large"), "AdditionalContext > 400", utils.Object{"path": "routes/scan.go", "user": user.ID})
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: "context is too large",
@@ -65,6 +73,7 @@ func ProcessResponse(c *gin.Context) {
 
 	// We need either text or image
 	if requestData.Tone == "" {
+		utils.LogError(errors.New("tone is needed it"), "tone is empty", utils.Object{"path": "routes/scan.go", "user": user.ID})
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: "tone is needed it",
@@ -99,7 +108,7 @@ func ProcessResponse(c *gin.Context) {
 
 	response, usages, err := openai.GenerateResponses(&openAIData)
 	if err != nil {
-		utils.LogError(err, "Error generating responses from OpenAI")
+		utils.LogError(err, "Error generating responses from OpenAI", utils.Object{"path": "routes/scan.go", "user": user.ID})
 		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
@@ -108,7 +117,7 @@ func ProcessResponse(c *gin.Context) {
 	}
 
 	if err := retrieveAndIncrementCounts(c, usages); err != nil {
-		utils.LogError(err, "Failed to process user counts")
+		utils.LogError(err, "Failed to process user counts", utils.Object{"path": "routes/scan.go", "user": user.ID})
 	}
 
 	c.JSON(http.StatusOK, types.ApiResponse{
@@ -122,13 +131,11 @@ func ProcessResponse(c *gin.Context) {
 func retrieveAndIncrementCounts(c *gin.Context, usages int) error {
 	user, err := getUserFromContext(c)
 	if err != nil {
-		utils.LogError(err, "Error getting user from context for increment usages")
-		return err
+		return fmt.Errorf("error getting user from context for increment usages: %w", err)
 	}
 
 	if err := user.IncrementCountsAndUsages(usages); err != nil {
-		utils.LogError(err, "Error incrementing user usages count")
-		return err
+		return fmt.Errorf("error incrementing user usages count: %w", err)
 	}
 
 	return nil

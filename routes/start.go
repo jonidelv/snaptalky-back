@@ -1,6 +1,7 @@
 package routes
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/golang-jwt/jwt/v4"
@@ -24,7 +25,7 @@ type startRequest struct {
 func StartApp(c *gin.Context) {
 	var req startRequest
 	if err := c.BindJSON(&req); err != nil {
-		utils.LogError(err, "Invalid request payload")
+		utils.LogError(err, "invalid request payload", utils.Object{"path": "routes/start.go"})
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: "invalid request",
@@ -35,6 +36,7 @@ func StartApp(c *gin.Context) {
 	tknHeader := c.GetHeader("ids") // This is the token coming from the app calling it ids ;)
 	startToken := os.Getenv("START_TOKEN")
 	if tknHeader != startToken {
+		utils.LogError(errors.New("unauthorized"), "invalid ids request", utils.Object{"path": "routes/start.go"})
 		c.JSON(http.StatusUnauthorized, types.ApiResponse{
 			Status:  "error",
 			Message: "unauthorized",
@@ -44,6 +46,7 @@ func StartApp(c *gin.Context) {
 
 	deviceID := req.DeviceID
 	if deviceID == "" {
+		utils.LogError(errors.New("deviceID required"), "invalid req.DeviceID", utils.Object{"path": "routes/start.go"})
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: "deviceID is required",
@@ -62,7 +65,7 @@ func StartApp(c *gin.Context) {
 				Platform: req.Platform,
 			}
 			if err := database.DB.Create(&user).Error; err != nil {
-				utils.LogError(err, "Error creating user")
+				utils.LogError(err, "Error creating user", utils.Object{"path": "routes/start.go"})
 				c.JSON(http.StatusInternalServerError, types.ApiResponse{
 					Status:  "error",
 					Message: "error creating user",
@@ -70,7 +73,7 @@ func StartApp(c *gin.Context) {
 				return
 			}
 		} else {
-			utils.LogError(err, "Database error")
+			utils.LogError(err, "database error", utils.Object{"path": "routes/start.go"})
 			c.JSON(http.StatusInternalServerError, types.ApiResponse{
 				Status:  "error",
 				Message: "database error",
@@ -81,7 +84,7 @@ func StartApp(c *gin.Context) {
 
 	appToken, err := createJWTToken(user.ID)
 	if err != nil {
-		utils.LogError(err, "APP_TOKEN creation failed")
+		utils.LogError(err, "app token creation failed", utils.Object{"path": "routes/start.go", "user": user.ID})
 		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: "app token creation failed",

@@ -1,8 +1,10 @@
 package routes
 
 import (
+	"errors"
 	"github.com/gin-gonic/gin"
 	"github.com/jonidelv/snaptalky-back/database"
+	"github.com/jonidelv/snaptalky-back/utils"
 	"github.com/jonidelv/snaptalky-back/utils/types"
 	"net/http"
 )
@@ -11,6 +13,7 @@ func GetUser(c *gin.Context) {
 	//id := c.Param("id")
 	user, err := getUserFromContext(c)
 	if err != nil {
+		utils.LogError(err, "failed to get user from context", utils.Object{"path": "routes/user.go"})
 		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
@@ -39,6 +42,7 @@ func UpdateUser(c *gin.Context) {
 	// Retrieve the existing user from the context
 	user, err := getUserFromContext(c)
 	if err != nil {
+		utils.LogError(err, "failed to get user from context", utils.Object{"path": "routes/user.go"})
 		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: "failed to get user from context",
@@ -48,6 +52,7 @@ func UpdateUser(c *gin.Context) {
 
 	var input UpdateUserInput
 	if err := c.ShouldBindJSON(&input); err != nil {
+		utils.LogError(err, "failed to bind JSON payload", utils.Object{"path": "routes/user.go", "user": user.ID})
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
 			Message: err.Error(),
@@ -56,9 +61,10 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	if input.Bio != nil && len(*input.Bio) > 350 {
+		utils.LogError(errors.New("bio cannot be too large"), "bio > 350", utils.Object{"path": "routes/user.go", "user": user.ID})
 		c.JSON(http.StatusBadRequest, types.ApiResponse{
 			Status:  "error",
-			Message: "bio cannot bio too large",
+			Message: "bio cannot be too large",
 		})
 		return
 	}
@@ -81,6 +87,7 @@ func UpdateUser(c *gin.Context) {
 	}
 
 	if err := database.DB.Save(&user).Error; err != nil {
+		utils.LogError(err, "failed to update user in database", utils.Object{"path": "routes/user.go", "user": user.ID})
 		c.JSON(http.StatusInternalServerError, types.ApiResponse{
 			Status:  "error",
 			Message: "failed to update user in database",

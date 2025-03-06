@@ -3,11 +3,13 @@ package models
 import (
 	"errors"
 	"fmt"
-	"github.com/google/uuid"
-	"github.com/jonidelv/snaptalky-back/database"
 	"gorm.io/gorm"
 	"strings"
 	"time"
+
+	"github.com/google/uuid"
+
+	"github.com/jonidelv/snaptalky-back/database"
 )
 
 type Response struct {

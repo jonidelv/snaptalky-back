@@ -2,8 +2,9 @@ package openai
 
 import (
 	"fmt"
-	"github.com/jonidelv/snaptalky-back/utils/types"
 	"strings"
+
+	"github.com/jonidelv/snaptalky-back/utils/types"
 )
 
 type TextContent struct {
